@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     public int buttonNum=10;
@@ -15,11 +14,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setButtons();
-        Toast.makeText(MyApplication.getContext(),"context is available",Toast.LENGTH_SHORT).show();
+        //MyApp.toastText("context is available");
     }
     private void setButtons(){
         ButtonListener buttonListener=new ButtonListener();
-        buttons[0]=findViewById(R.id.button_test);
+        buttons[0]=findViewById(R.id.button_net);
+        buttons[1]=findViewById(R.id.button_ui);
+        buttons[2]=findViewById(R.id.button_data);
         for (int i=0;i<buttonNum;i++){
             if(buttons[i]!=null)
                 buttons[i].setOnClickListener(buttonListener);
@@ -30,8 +31,16 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v){
             Intent intent;
             switch (v.getId()){
-                case R.id.button_test:
-                    intent=new Intent(MainActivity.this,TestActivity.class);
+                case R.id.button_net:
+                    intent=new Intent(MainActivity.this,NetActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.button_ui:
+                    intent=new Intent(MainActivity.this,UIActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.button_data:
+                    intent=new Intent(MainActivity.this,DataActivity.class);
                     startActivity(intent);
                     break;
             }

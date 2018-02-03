@@ -34,12 +34,12 @@ public class Network {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 text =response.body().string();
-                MyApplication.getNetwork().sendMessage(handler,what);
+                MyApp.getNetwork().sendMessage(handler,what);
             }
             @Override
             public void onFailure(Call call,IOException e){
                 text ="Request failed : "+e.getCause();
-                MyApplication.getNetwork().sendMessage(handler,what);
+                MyApp.getNetwork().sendMessage(handler,what);
             }
         };
         Request request = new Request.Builder().url("http://" + ipAddress + ":" + port + "/" + path).build();
