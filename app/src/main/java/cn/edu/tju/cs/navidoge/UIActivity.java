@@ -1,8 +1,10 @@
 package cn.edu.tju.cs.navidoge;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -177,6 +179,23 @@ public class UIActivity extends AppCompatActivity {
                 int color = Color.BLUE;
                 Random random = new Random();
                 mapView.getController().sparkAtPoint(new PointF(20, 30), 100, color, 10);
+                break;
+            case R.id.dialog_test:
+                AlertDialog.Builder dialog = new AlertDialog.Builder(UIActivity.this);
+                dialog.setTitle("This is a dialog");
+                dialog.setMessage("Something is important");
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                dialog.show();
                 break;
         }
         return true;
