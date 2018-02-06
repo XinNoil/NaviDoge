@@ -5,14 +5,14 @@ package cn.edu.tju.cs.navidoge.Net;
  */
 
 public class LocateRequest {
-    private int rId;
+    private int rSn;
     private long rTimestamp;
     private LocationData[] locationData;
     private int rDataNum;
     private int rDataTop;
     //private LocationData magData;
     public LocateRequest(int rId,long rTimestamp,int rDataNum){
-        this.rId=rId;
+        this.rSn =rId;
         this.rTimestamp=rTimestamp;
         this.rDataNum=rDataNum;
         this.locationData=new LocationData[rDataNum];

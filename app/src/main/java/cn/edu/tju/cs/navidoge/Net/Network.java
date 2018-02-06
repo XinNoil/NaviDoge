@@ -21,7 +21,7 @@ import okhttp3.Response;
  */
 
 public class Network {
-    public String ipAddress="123.206.89.235";
+    public String ipAddress="1.1.1.105";
     public int port=8080;
     private OkHttpClient client=new OkHttpClient();
     public void sendMessage(Handler handler,int what,Bundle bundle){
@@ -50,13 +50,13 @@ public class Network {
                 Bundle bundle=new Bundle();
                 bundle.putString("Response",response.toString());
                 bundle.putString("Body",response.body().string());
-                bundle.putString("Status","1");
+                bundle.putInt("Status",1);
                 MyApp.getNetwork().sendMessage(handler,what,bundle);
             }
             @Override
             public void onFailure(Call call,IOException e){
                 Bundle bundle=new Bundle();
-                bundle.putString("Status","0");
+                bundle.putInt("Status",0);
                 MyApp.getNetwork().sendMessage(handler,what,bundle);
             }
         };
@@ -70,18 +70,18 @@ public class Network {
                 Bundle bundle=new Bundle();
                 bundle.putString("Response",response.toString());
                 bundle.putString("Body",response.body().string());
-                bundle.putString("Status","1");
+                bundle.putInt("Status",1);
                 MyApp.getNetwork().sendMessage(handler,what,bundle);
             }
             @Override
             public void onFailure(Call call,IOException e){
                 Bundle bundle=new Bundle();
-                bundle.putString("Status","0");
+                bundle.putInt("Status",0);
                 MyApp.getNetwork().sendMessage(handler,what,bundle);
             }
         };
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),json);
-        Request request = new Request.Builder().url("http://" + ipAddress + ":" + port + "/" + path).build();
+        Request request = new Request.Builder().post(body).url("http://" + ipAddress + ":" + port + "/" + path).build();
         client.newCall(request).enqueue(callback);
     }
 }

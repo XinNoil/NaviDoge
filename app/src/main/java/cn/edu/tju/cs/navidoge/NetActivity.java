@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.sql.Timestamp;
 
@@ -20,6 +21,7 @@ public class NetActivity extends AppCompatActivity {
     public static final int SET_BSSIDS=2;
     public int buttonNum=10;
     public Button[] buttons=new Button[buttonNum];
+    public TextView[] textView=new TextView[1];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,7 @@ public class NetActivity extends AppCompatActivity {
             if(buttons[i]!=null)
                 buttons[i].setOnClickListener(buttonListener);
         }
+        textView[0]=findViewById(R.id.debugView);
         MyApp.getDataControl().setContext(this);
         MyApp.getDataControl().initWiFiScan();
         MyApp.getDataControl().getWiFiScan().OpenWifi();
@@ -43,10 +46,14 @@ public class NetActivity extends AppCompatActivity {
             switch (msg.what){
                 case SHOW_TEXT:
                     MyApp.toastText(msg.getData().toString());
+                    textView[0].setText(msg.getData().toString());
                     break;
                 case SET_BSSIDS:
-                    MyApp.getDataControl().setBssidBundle(msg.getData().getString("Body"));
-                    MyApp.toastText(MyApp.getDataControl().getBssidBundle().toString());
+                    if (msg.getData().getInt("Status")==1){
+                        MyApp.getDataControl().setBssidBundle(msg.getData().getString("Body"));
+                        textView[0].setText(MyApp.getDataControl().getBssidBundle().toString());
+                    }
+                    MyApp.toastText(msg.getData().toString());
             }
         }
     };
