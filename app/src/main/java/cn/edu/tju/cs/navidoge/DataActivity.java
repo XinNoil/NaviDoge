@@ -17,6 +17,9 @@ public class DataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_data);
         setButtons();
         setViews();
+        MyApp.getDataControl().setContext(this);
+        MyApp.getDataControl().initWiFiScan();
+        MyApp.getDataControl().getWiFiScan().OpenWifi();
         MyApp.getDataControl().timer();
     }
     private void setButtons(){

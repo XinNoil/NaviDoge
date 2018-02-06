@@ -1,27 +1,40 @@
 package cn.edu.tju.cs.navidoge.Data;
 
+import android.content.Context;
 import android.os.Handler;
 import android.widget.TextView;
 
 import java.io.Serializable;
 
 import cn.edu.tju.cs.navidoge.DataActivity;
+import cn.edu.tju.cs.navidoge.MyApp;
 
 /**
  * Created by lenovo on 2018/2/5.
  */
 
 public class DataControl implements Serializable {
+
     public int Num=10;
     private static int index=0;
     private static int state=0;
     private static Sensors sensors=new Sensors();
-    private static WiFiScan wiFiScan=new WiFiScan();
+    private static WiFiScan wiFiScan;
     private static GPSScan gpsScan=new GPSScan();
     public int time_gap=1000;
     public TextView[] textViews;
     Handler handler=new Handler();
+    private Context context;
     public DataControl(){
+    }
+    public void setContext(Context context){
+        this.context=context;
+    }
+    public WiFiScan getWiFiScan(){
+        return wiFiScan;
+    }
+    public void initWiFiScan(){
+        wiFiScan=new WiFiScan(context);
     }
     public void timer() {
         Runnable runnable = new Runnable() {
