@@ -8,6 +8,20 @@
         android:id="@+id/button_get_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="get_time" />
-
+        android:text="get time" />
+    <Button
+        android:id="@+id/button_set_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="set IP" />
+    <Button
+        android:id="@+id/button_get_bssids"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="get bssids" />
+    <Button
+        android:id="@+id/button_send_json"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="send json" />
 </LinearLayout>
