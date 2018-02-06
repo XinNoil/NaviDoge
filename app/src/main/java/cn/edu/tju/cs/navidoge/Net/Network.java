@@ -1,10 +1,11 @@
-package cn.edu.tju.cs.navidoge;
+package cn.edu.tju.cs.navidoge.Net;
 
 import android.os.Handler;
 import android.os.Message;
 
 import java.io.IOException;
 
+import cn.edu.tju.cs.navidoge.MyApp;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -17,7 +18,7 @@ import okhttp3.Response;
  */
 
 public class Network {
-    public String ipAddress="1.1.1.105";
+    public String ipAddress="123.206.89.235";
     public int port=8080;
     private OkHttpClient client=new OkHttpClient();
     private String text;
@@ -25,6 +26,15 @@ public class Network {
         Message message = new Message();
         message.what= what;
         handler.sendMessage(message);
+    }public String setIPAddress(){
+        this.ipAddress="123.206.89.235";
+        MyApp.toastText("IP "+this.ipAddress);
+        return this.ipAddress;
+    }
+    public String setIPAddress(String ipAddress){
+        this.ipAddress=ipAddress;
+        MyApp.toastText("IP "+this.ipAddress);
+        return this.ipAddress;
     }
     public String getIPAddress(){
         return ipAddress;
