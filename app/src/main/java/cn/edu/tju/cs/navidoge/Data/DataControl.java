@@ -37,6 +37,7 @@ public class DataControl implements Serializable {
     public static WiFiScan getWiFiScan(){
         return wiFiScan;
     }
+    public static GPSScan getGpsScan(){ return gpsScan; }
     public void initWiFiScan(){
         wiFiScan=new WiFiScan(context);
     }
