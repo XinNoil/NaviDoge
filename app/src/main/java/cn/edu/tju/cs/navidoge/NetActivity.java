@@ -17,6 +17,7 @@ import cn.edu.tju.cs.navidoge.Net.LocationData;
 
 public class NetActivity extends AppCompatActivity {
     public static final int SHOW_TEXT =1;
+    public static final int SET_BSSIDS=2;
     public int buttonNum=10;
     public Button[] buttons=new Button[buttonNum];
     @Override
@@ -32,14 +33,20 @@ public class NetActivity extends AppCompatActivity {
             if(buttons[i]!=null)
                 buttons[i].setOnClickListener(buttonListener);
         }
+        MyApp.getDataControl().setContext(this);
+        MyApp.getDataControl().initWiFiScan();
+        MyApp.getDataControl().getWiFiScan().OpenWifi();
     }
     private Handler handler= new Handler(){
         @Override
         public void handleMessage(Message msg){
             switch (msg.what){
                 case SHOW_TEXT:
-                    MyApp.toastNetworkText();
+                    MyApp.toastText(msg.getData().toString());
                     break;
+                case SET_BSSIDS:
+                    MyApp.getDataControl().setBssidBundle(msg.getData().getString("Body"));
+                    MyApp.toastText(MyApp.getDataControl().getBssidBundle().toString());
             }
         }
     };
@@ -71,17 +78,18 @@ public class NetActivity extends AppCompatActivity {
                     dialog.show();
                     break;
                 case R.id.button_get_bssids:
-                    MyApp.getNetwork().getRequest("bssids",handler,SHOW_TEXT);
+                    MyApp.getNetwork().getRequest("bssids",handler,SET_BSSIDS);
                     break;
                 case R.id.button_send_json:
                     int time = (int) (System.currentTimeMillis());
                     Timestamp tsTemp = new Timestamp(time);
                     LocateRequest locateRequest=new LocateRequest(1,tsTemp.getTime(),2);
-                    LocationData rssiData=new LocationData(1);
+                    LocationData rssiData=new LocationData(MyApp.getDataControl().getWiFiScan().getScanResults(), MyApp.getDataControl().getBssidBundle());
                     LocationData magData=new LocationData(2);
                     locateRequest.addLocationData(rssiData);
-                    locateRequest.addLocationData(rssiData);
+                    locateRequest.addLocationData(magData);
                     MyApp.toastText(MyApp.getjson(locateRequest));
+                    MyApp.getNetwork().postRequest("locate",handler,SHOW_TEXT,MyApp.getjson(locateRequest));
                     break;
             }
         }

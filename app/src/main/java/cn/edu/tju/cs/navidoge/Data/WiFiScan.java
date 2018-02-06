@@ -4,6 +4,7 @@ package cn.edu.tju.cs.navidoge.Data;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 
 import java.util.List;
 
@@ -19,7 +20,6 @@ public class WiFiScan{
     public StringBuilder display;
     public StringBuilder output;
     public boolean isRecord;
-
     public int recordNo=0;
     public int targetNo=1000000;
 
@@ -54,9 +54,10 @@ public class WiFiScan{
             return false;
     }
 
-    public void getScanResults(){
+    public List<ScanResult> getScanResults(){
         wm.startScan();
         wl=wm.getScanResults();
+        return wl;
     }
 
     public String[] getDisplayOutput(){

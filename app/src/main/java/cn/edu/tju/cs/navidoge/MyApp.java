@@ -2,6 +2,7 @@ package cn.edu.tju.cs.navidoge;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -29,10 +30,6 @@ public class MyApp extends Application {
     public static void toastText(String text){
         Toast.makeText(context,text,Toast.LENGTH_SHORT).show();
     }
-    public static void toastNetworkText(){
-        Toast.makeText(context,network.getText(),Toast.LENGTH_SHORT).show();
-    }
-
     public static Context getContext(){
         return context;
     }

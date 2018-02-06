@@ -1,8 +1,11 @@
 package cn.edu.tju.cs.navidoge.Data;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.io.Serializable;
 
@@ -14,23 +17,24 @@ import cn.edu.tju.cs.navidoge.MyApp;
  */
 
 public class DataControl implements Serializable {
-
     public int Num=10;
     private static int index=0;
     private static int state=0;
     private static Sensors sensors=new Sensors();
     private static WiFiScan wiFiScan;
     private static GPSScan gpsScan=new GPSScan();
+    private static Bundle bssidBundle=new Bundle();
     public int time_gap=1000;
     public TextView[] textViews;
     Handler handler=new Handler();
     private Context context;
+    private static Gson gson=new Gson();
     public DataControl(){
     }
     public void setContext(Context context){
         this.context=context;
     }
-    public WiFiScan getWiFiScan(){
+    public static WiFiScan getWiFiScan(){
         return wiFiScan;
     }
     public void initWiFiScan(){
@@ -81,5 +85,19 @@ public class DataControl implements Serializable {
             state=4;
             return "ERR";
         }
+    }
+    public void setBssidBundle(Bundle bssidBundle){
+        this.bssidBundle=bssidBundle;
+    }
+    public Bundle getBssidBundle(){
+        return bssidBundle;
+    }
+    public void setBssidBundle(String bssidList){
+        String[] bssidStrings = gson.fromJson(bssidList, String[].class);
+        Bundle bundle=new Bundle();
+        for (int i=0;i<bssidStrings.length;i++){
+            bundle.putInt(bssidStrings[i],i);
+        }
+        setBssidBundle(bundle);
     }
 }

@@ -26,7 +26,13 @@ public class Sensors extends Activity implements SensorEventListener {
     final Sensor gyroscopeSensor;
     final Sensor gravitySensor;
     public boolean haveGravity=false;
+    public Gravity gravity=new Gravity();
+    public MagneticField magneticField=new MagneticField();
+    public float[] gra=new float[3];
+    public float[] mag=new float[3];
     double[][] values = new double[10][3];
+    public float time_constant = 0.01f;
+    public float alpha = 0.8f;
     long[] timestamps=new long[10];
     static final double NS2S = 1.0f / 1000000000.0f;
     public StringBuilder display=new StringBuilder();
@@ -60,7 +66,36 @@ public class Sensors extends Activity implements SensorEventListener {
             values[SensorINDEX][i] = event.values[i];
         }
         switch (event.sensor.getType()){
+            case Sensor.TYPE_ACCELEROMETER:
+                if(!haveGravity){
+                    alpha = time_constant/(time_constant+(float)dT);
+                    // Isolate the force of gravity with the low-pass filter.
+                    values[getSensorIndex(Sensor.TYPE_GRAVITY)][0] = gra[0] = alpha * gra[0] + (1 - alpha) * event.values[0];
+                    values[getSensorIndex(Sensor.TYPE_GRAVITY)][1] = gra[1] = alpha * gra[1] + (1 - alpha) * event.values[1];
+                    values[getSensorIndex(Sensor.TYPE_GRAVITY)][2] = gra[2] = alpha * gra[2] + (1 - alpha) * event.values[2];
+                    gravity.calElements(gra);
+                }
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                mag[0]=event.values[0];
+                mag[1]=event.values[1];
+                mag[2]=event.values[2];
+                break;
+            case Sensor.TYPE_GRAVITY:
+                gra[0]=event.values[0];
+                gra[1]=event.values[1];
+                gra[2]=event.values[2];
+                gravity.calElements(gra);
+                break;
         }
+    }
+    public double[] get2DMagnetic(){
+        double hmag[]=gravity.getTransform(mag);
+        magneticField.setMagnetic_h(hmag);
+        double res[]=new double[2];
+        res[0]=magneticField.getHxy();
+        res[1]=magneticField.getHz();
+        return res;
     }
     public int getSensor_num(){
         return sensor_num;

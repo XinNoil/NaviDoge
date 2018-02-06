@@ -1,5 +1,10 @@
 package cn.edu.tju.cs.navidoge.Net;
 
+import android.net.wifi.ScanResult;
+import android.os.Bundle;
+
+import java.util.List;
+
 /**
  * Created by lenovo on 2018/2/5.
  */
@@ -22,6 +27,14 @@ public class LocationData {
             dData=new double[2];
             dData[0]=48;
             dData[1]=-10;
+        }
+    }
+    public LocationData(List<ScanResult> wl, Bundle bssidBundle){
+        dType="rssi";
+        dData=new double[bssidBundle.size()];
+        for (ScanResult result: wl){
+            if(bssidBundle.containsKey(result.BSSID))
+                dData[bssidBundle.getInt(result.BSSID)]=result.level;
         }
     }
     public LocationData(String dType,double[] dData){
