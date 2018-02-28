@@ -30,7 +30,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="akKHMRH2wheYNOO1BkylX3RRz5q1BsXh"/>
+            android:value="N78hBGXu63P8MlmIbTPhy1fHmONKvdFG"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

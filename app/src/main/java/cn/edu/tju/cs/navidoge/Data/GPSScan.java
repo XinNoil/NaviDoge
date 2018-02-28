@@ -36,7 +36,7 @@ public class GPSScan {
     public class MyLocationListener implements BDLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location){
-            StringBuilder currentPosition = new StringBuilder();
+            currentPosition = new StringBuilder();
             currentPosition.append("纬度：").append(location.getLatitude()).append("\n");
             currentPosition.append("经度：").append(location.getLongitude()).append("\n");
             currentPosition.append("定位方式：");
