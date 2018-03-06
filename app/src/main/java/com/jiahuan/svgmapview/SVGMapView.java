@@ -2,88 +2,68 @@ package com.jiahuan.svgmapview;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 
 import com.jiahuan.svgmapview.core.componet.MapMainView;
 import com.jiahuan.svgmapview.overlay.SVGMapBaseOverlay;
+import com.jiahuan.svgmapview.overlay.SVGMapLocationOverlay;
 
 import java.util.List;
 
+import cn.edu.tju.cs.navidoge.R;
 
-public class SVGMapView extends FrameLayout
-{
+
+public class SVGMapView extends FrameLayout {
     private MapMainView mapMainView;
-
     private SVGMapController mapController;
+    private SVGMapLocationOverlay locationOverlay;
+    private int locationOverlayIndex = -1;
 
-    private ImageView brandImageView;
-
-    public SVGMapView(Context context)
-    {
+    public SVGMapView(Context context) {
         this(context, null);
     }
 
-    public SVGMapView(Context context, AttributeSet attrs)
-    {
+    public SVGMapView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SVGMapView(Context context, AttributeSet attrs, int defStyle)
-    {
+    public SVGMapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mapMainView = new MapMainView(context, attrs, defStyle);
         addView(mapMainView);
-        brandImageView = new ImageView(context, attrs, defStyle);
-        brandImageView.setScaleType(ScaleType.FIT_START);
-        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources().getDisplayMetrics()));
-        params.gravity = Gravity.BOTTOM | Gravity.LEFT;
-        params.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, context.getResources().getDisplayMetrics());
-        params.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics());
-        addView(brandImageView, params);
     }
 
     /**
      * @return the map controller.
      */
-    public SVGMapController getController()
-    {
-        if (this.mapController == null)
-        {
+    public SVGMapController getController() {
+        if (this.mapController == null) {
             this.mapController = new SVGMapController(this);
         }
         return this.mapController;
     }
 
-    public void registerMapViewListener(SVGMapViewListener idrMapViewListener)
-    {
-        this.mapMainView.registeMapViewListener(idrMapViewListener);
+    public void registerMapViewListener(SVGMapViewListener idrMapViewListener) {
+        this.mapMainView.registerMapViewListener(idrMapViewListener);
     }
 
-    public void loadMap(String svgString)
-    {
+    public void loadMap(String svgString) {
         this.mapMainView.loadMap(svgString);
     }
 
-    public void setBrandBitmap(Bitmap bitmap) {
-        this.brandImageView.setImageBitmap(bitmap);
-    }
 
-    public void refresh()
-    {
+    public void refresh() {
         this.mapMainView.refresh();
     }
 
     /**
      * @return whether the map is already loaded.
      */
-    public boolean isMapLoadFinsh()
-    {
+    public boolean isMapLoadFinsh() {
         return this.mapMainView.isMapLoadFinsh();
     }
 
@@ -91,61 +71,69 @@ public class SVGMapView extends FrameLayout
      * get the current map.
      * It will be callback in the map listener of 'onGetCurrentMap'
      */
-    public void getCurrentMap()
-    {
+    public void getCurrentMap() {
         this.mapMainView.getCurrentMap();
     }
 
 
-    public float getCurrentRotateDegrees()
-    {
+    public float getCurrentRotateDegrees() {
         return this.mapMainView.getCurrentRotateDegrees();
     }
 
 
-    public float getCurrentZoomValue()
-    {
+    public float getCurrentZoomValue() {
         return this.mapMainView.getCurrentZoomValue();
     }
 
 
-    public float getMaxZoomValue()
-    {
+    public float getMaxZoomValue() {
         return this.mapMainView.getMaxZoomValue();
     }
 
 
-    public float getMinZoomValue()
-    {
+    public float getMinZoomValue() {
         return this.mapMainView.getMinZoomValue();
     }
 
 
-    public float[] getMapCoordinateWithScreenCoordinate(float screenX, float screenY)
-    {
+    public float[] getMapCoordinateWithScreenCoordinate(float screenX, float screenY) {
         return this.mapMainView.getMapCoordinateWithScreenCoordinate(screenX, screenY);
     }
 
-    public List<SVGMapBaseOverlay> getOverLays()
-    {
+    public List<SVGMapBaseOverlay> getOverLays() {
         return this.mapMainView.getOverLays();
     }
 
 
-
-    public void onDestroy()
-    {
+    public void onDestroy() {
         this.mapMainView.onDestroy();
     }
 
-    public void onPause()
-    {
+    public void onPause() {
         this.mapMainView.onPause();
     }
 
-    public void onResume()
-    {
+    public void onResume() {
         this.mapMainView.onResume();
     }
 
+    public void setLocationOverlay(float x, float y) {
+        float XY[] = getMapCoordinateWithScreenCoordinate(x, y);
+        locationOverlay = new SVGMapLocationOverlay(this);
+        locationOverlay.setIndicatorArrowBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.indicator_arrow));
+        locationOverlay.setPosition(new PointF(XY[0], XY[1]));
+        if (locationOverlayIndex == -1) {
+            locationOverlayIndex = this.getOverLays().size();
+        } else {
+            this.getOverLays().remove(locationOverlayIndex);
+        }
+        this.getOverLays().add(locationOverlay);
+        this.refresh();
+    }
+
+    public String getMapInfo() {
+        StringBuilder mapInfo = new StringBuilder();
+        mapInfo.append("Size: "+mapMainView.getFloorMap().getWidth()+" "+mapMainView.getFloorMap().getHeight());
+        return mapInfo.toString();
+    }
 }

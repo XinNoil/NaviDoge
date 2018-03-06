@@ -3,6 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+    <item
+        android:id="@+id/action_map_info"
+        android:title="地图信息"
+        app:showAsAction="never"/>
     <!-- 手势相关 -->
     <item
         android:id="@+id/action_rotation_gesture"
@@ -31,21 +35,6 @@
 
     <!-- 操作相关 -->
     <item
-        android:id="@+id/action_zoom_double"
-        android:title="设置当前缩放率为放大到初始的两倍"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_zoom_half"
-        android:title="设置当前缩放率为缩小到初始的一半"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_rotate_to"
-        android:title="设置当前旋转角度为初始30度"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/action_get_current_map"
         android:title="获取当前地图截图"
         app:showAsAction="never"/>
@@ -59,6 +48,7 @@
         android:id="@+id/spark_overlay"
         android:title="范围显示"
         app:showAsAction="never"/>
+
     <item
         android:id="@+id/dialog_test"
         android:title="对话框显示"

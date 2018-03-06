@@ -2,6 +2,7 @@ package com.jiahuan.svgmapview;
 
 
 import android.graphics.Bitmap;
+import android.view.MotionEvent;
 
 /**
  * 地图事件监听类
@@ -16,4 +17,6 @@ public interface SVGMapViewListener
     void onMapLoadError();
 
     void onGetCurrentMap(Bitmap bitmap);
+
+    void onClick(MotionEvent event);
 }
