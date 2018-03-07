@@ -21,7 +21,7 @@ public class SVGMapView extends FrameLayout {
     private MapMainView mapMainView;
     private SVGMapController mapController;
     private SVGMapLocationOverlay locationOverlay;
-    private int locationOverlayIndex = -1;
+    private int existLocationOverlay = -1;
 
     public SVGMapView(Context context) {
         this(context, null);
@@ -117,16 +117,15 @@ public class SVGMapView extends FrameLayout {
         this.mapMainView.onResume();
     }
 
-    public void setLocationOverlay(float x, float y) {
-        float XY[] = getMapCoordinateWithScreenCoordinate(x, y);
+    public void setLocationOverlay(float XY[]) {
+        if (existLocationOverlay == -1) {
+            existLocationOverlay = 1;
+        } else {
+            this.getOverLays().remove(locationOverlay);
+        }
         locationOverlay = new SVGMapLocationOverlay(this);
         locationOverlay.setIndicatorArrowBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.indicator_arrow));
         locationOverlay.setPosition(new PointF(XY[0], XY[1]));
-        if (locationOverlayIndex == -1) {
-            locationOverlayIndex = this.getOverLays().size();
-        } else {
-            this.getOverLays().remove(locationOverlayIndex);
-        }
         this.getOverLays().add(locationOverlay);
         this.refresh();
     }

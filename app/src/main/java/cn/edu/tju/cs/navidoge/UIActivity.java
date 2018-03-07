@@ -65,8 +65,11 @@ public class UIActivity extends AppCompatActivity {
 
             @Override
             public void onClick(MotionEvent event) {
-                MyApp.toastText("onClick: x=" + String.valueOf(event.getX()) + " y=" + String.valueOf(event.getY()));
-                mapView.setLocationOverlay(event.getX(),event.getY());
+                float XY[] = mapView.getMapCoordinateWithScreenCoordinate(event.getX(),event.getY());
+                MyApp.toastText("onClick: \n"
+                        +"On Screen{ x=" + String.valueOf(event.getX()) + " y=" + String.valueOf(event.getY())+" } \n"
+                        +"On Map{ x=" + String.valueOf(XY[0]) + " y=" + String.valueOf(XY[1])+" } ");
+                mapView.setLocationOverlay(XY);
                 mapView.refresh();
             }
         });
@@ -164,7 +167,7 @@ public class UIActivity extends AppCompatActivity {
             case R.id.spark_overlay:
                 int color = Color.BLUE;
                 Random random = new Random();
-                mapView.getController().sparkAtPoint(new PointF(20, 30), 100, color, 10);
+                mapView.getController().sparkAtPoint(new PointF(20, 30), 10, color, 3);
                 break;
         }
         return true;

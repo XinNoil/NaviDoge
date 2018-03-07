@@ -8,7 +8,7 @@ import com.baidu.location.LocationClientOption;
 import cn.edu.tju.cs.navidoge.MyApp;
 
 /**
- * Created by lenovo on 2018/2/5.
+ * Created by XinNoil on 2018/2/5.
  */
 
 

@@ -280,7 +280,6 @@ public class MapMainView extends SurfaceView implements Callback {
                     }
                 } else if (this.mTouchState == TOUCH_STATE_REST) {
                     if (Math.abs(event.getX() - start.x) > 0.1 && Math.abs(event.getY() - start.y) > 0.1) {
-                        //MyApp.toastText("ACTION_MOVE: x=" + String.valueOf(event.getX() - start.x) + " y=" + String.valueOf(event.getY() - start.y));
                         this.mTouchState = TOUCH_STATE_SCROLLING;
                     }
                 }

@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         buttons[0]=findViewById(R.id.button_net);
         buttons[1]=findViewById(R.id.button_ui);
         buttons[2]=findViewById(R.id.button_data);
+        buttons[3]=findViewById(R.id.button_demo);
         for (int i=0;i<buttonNum;i++){
             if(buttons[i]!=null)
                 buttons[i].setOnClickListener(buttonListener);
@@ -41,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.button_data:
                     intent=new Intent(MainActivity.this,DataActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.button_demo:
+                    intent=new Intent(MainActivity.this,DemoActivity.class);
                     startActivity(intent);
                     break;
             }

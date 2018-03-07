@@ -49,8 +49,4 @@
         android:title="范围显示"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/dialog_test"
-        android:title="对话框显示"
-        app:showAsAction="never"/>
 </menu>
