@@ -37,7 +37,8 @@ public class MyApp extends Application {
         return network;
     }
     public static DataControl getDataControl() { return  dataControl; }
-    public static String getjson(Object obj){
+    public static String toGson(Object obj){
         return gson.toJson(obj);
     }
+    public static Gson getGson(){return gson;}
 }

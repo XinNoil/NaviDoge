@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
@@ -21,8 +22,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-
     <include layout="@layout/content_demo" />
 
     <android.support.design.widget.FloatingActionButton
@@ -32,8 +31,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
-        app:rippleColor="@android:color/holo_blue_dark"
         app:elevation="0dp"
+        app:fabSize="mini"
+        app:rippleColor="@android:color/holo_blue_dark"
         app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
 

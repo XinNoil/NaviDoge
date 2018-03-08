@@ -7,17 +7,11 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -33,16 +27,24 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="N78hBGXu63P8MlmIbTPhy1fHmONKvdFG" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NetActivity" />
-        <activity android:name=".UIActivity" />
-        <activity android:name=".DataActivity" />
+        <activity
+            android:name=".NetActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".UIActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".DataActivity"
+            android:launchMode="singleTop" />
 
         <service
             android:name="com.baidu.location.f"
@@ -52,12 +54,19 @@
         <activity
             android:name=".DemoActivity"
             android:label="@string/title_activity_demo"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:launchMode="singleTop" />
+
 
         <service
             android:name=".IndoorLocationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"
+            android:launchMode="singleTop" />
+
     </application>
 
-</manifest>
+</manifest><!-- android:theme="@style/AppTheme.NoActionBar" -->

@@ -95,8 +95,8 @@ public class NetActivity extends AppCompatActivity {
                     LocationData magData=new LocationData(2);
                     locateRequest.addLocationData(rssiData);
                     locateRequest.addLocationData(magData);
-                    MyApp.toastText(MyApp.getjson(locateRequest));
-                    MyApp.getNetwork().postRequest("locate",handler,SHOW_TEXT,MyApp.getjson(locateRequest));
+                    MyApp.toastText(MyApp.toGson(locateRequest));
+                    MyApp.getNetwork().postRequest("locate",handler,SHOW_TEXT,MyApp.toGson(locateRequest));
                     break;
             }
         }

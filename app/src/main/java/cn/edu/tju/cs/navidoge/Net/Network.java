@@ -21,7 +21,7 @@ import okhttp3.Response;
  */
 
 public class Network {
-    public String ipAddress="1.1.1.105";
+    public String ipAddress="123.206.89.235";
     public int port=8080;
     private OkHttpClient client=new OkHttpClient();
     public void sendMessage(Handler handler,int what,Bundle bundle){
