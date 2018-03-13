@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import cn.edu.tju.cs.navidoge.Data.DataControl;
@@ -55,12 +56,34 @@ public class MyApp extends Application {
         return new Timestamp(time);
     }
 
+    public static Bundle getBundleWithJson(String json){
+        try {
+            JSONObject jsonObject = toJsonObject(json);
+            return jsonToBundle(jsonObject);
+        } catch (JSONException ignored) {
+
+        }
+        return null;
+    }
+
+    public static JSONObject toJsonObject(String jsonString) throws JSONException {
+        return new JSONObject(jsonString);
+    }
+    public static Bundle jsonToBundle(JSONObject jsonObject) throws JSONException {
+        Bundle bundle = new Bundle();
+        Iterator iterator = jsonObject.keys();
+        while(iterator.hasNext()){
+            String key = (String)iterator.next();
+            String value = jsonObject.getString(key);
+            bundle.putString(key,value);
+        }
+        return bundle;
+    }
+
     public static String getJsonWithBundle(final Bundle bundle) {
         if (bundle == null) return null;
         JSONObject jsonObject = new JSONObject();
-
         for (String key : bundle.keySet()) {
-            Object obj = bundle.get(key);
             try {
                 jsonObject.put(key, wrap(bundle.get(key)));
             } catch (JSONException e) {

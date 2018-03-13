@@ -104,8 +104,9 @@ public class DemoActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                indoorLocationBinder.getLocation();
-                mapView.locationCenter(loc[0], loc[1]);
+                // TODO CENTER POSITION
+                //indoorLocationBinder.getLocation();
+                //mapView.locationCenter(loc[0], loc[1]);
             }
         });
 
@@ -163,7 +164,7 @@ public class DemoActivity extends AppCompatActivity {
 
             @Override
             public void onClick(MotionEvent event) {
-                //TODO CENTER POSITION
+                //TODO
 //                float XY[] = mapView.getMapCoordinateWithScreenCoordinate(event.getX(), event.getY());
 //                MyApp.toastText("onClick: \n"
 //                        + "On Screen{ x=" + String.valueOf(event.getX()) + " y=" + String.valueOf(event.getY()) + " } \n"
@@ -225,20 +226,26 @@ public class DemoActivity extends AppCompatActivity {
                 Building building = new Building();
                 str=MyApp.toGson(building);
                 Log.i(TAG,str);
+                Building tempb=MyApp.getGson().fromJson(str,Building.class);
+                Log.i(TAG,MyApp.getGson().toJson(tempb));
                 MyApp.toastText(str);
                 break;
             case R.id.action_area_test:
                 Area area = new Area();
                 str=MyApp.toGson(area);
                 Log.i(TAG,str);
+                Area tempa=MyApp.getGson().fromJson(str,Area.class);
+                Log.i(TAG,MyApp.getGson().toJson(tempa));
                 MyApp.toastText(str);
                 break;
             case  R.id.action_locate_conf:
                 Bundle locateEngineConf=new Bundle();
                 locateEngineConf.putString("Method","RADAR");
-                locateEngineConf.putInt("K",3);
+                locateEngineConf.putString("K","3");
                 str=MyApp.getJsonWithBundle(locateEngineConf);
                 Log.i(TAG,str);
+                Bundle tempbu=MyApp.getBundleWithJson(str);
+                Log.i(TAG,MyApp.getJsonWithBundle(tempbu));
                 MyApp.toastText(str);
                 break;
             case R.id.action_set_ip:

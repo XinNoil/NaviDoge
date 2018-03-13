@@ -23,10 +23,11 @@ public class DataControl implements Serializable {
     private static int state = 0;
     private static Sensors sensors = new Sensors();
     private static GPSScan gpsScan = new GPSScan();
-    private static Bundle bssidBundle = new Bundle();
     private static int time_gap = 1000;
     private static Handler handler = new Handler();
     private static Gson gson = new Gson();
+    private static Bundle locateEngineConf=new Bundle();
+    private static Bundle bssidBundle = new Bundle();
 
     public DataControl() {
     }
@@ -79,6 +80,14 @@ public class DataControl implements Serializable {
             state = 4;
             return "ERR";
         }
+    }
+
+    public static Bundle getLocateEngineConf(){
+        return locateEngineConf;
+    }
+
+    public static void setLocateEngineConf(String locateEngineConfStr){
+        locateEngineConf=MyApp.getBundleWithJson(locateEngineConfStr);
     }
 
     public static Bundle getBssidBundle() {
