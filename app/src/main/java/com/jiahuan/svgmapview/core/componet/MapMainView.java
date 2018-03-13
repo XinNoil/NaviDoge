@@ -489,6 +489,12 @@ public class MapMainView extends SurfaceView implements Callback {
         refresh();
     }
 
+    public void locationCenter(float x,float y){
+        matrix.set(savedMatrix);
+        matrix.postTranslate(x - start.x, y - start.y);
+        this.refresh();
+    }
+
     private float rotation(MotionEvent event) {
         float delta_x = (event.getX(0) - event.getX(1));
         float delta_y = (event.getY(0) - event.getY(1));

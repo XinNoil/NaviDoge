@@ -1,29 +1,44 @@
 package cn.edu.tju.cs.navidoge.Net;
 
+import android.util.Log;
+
 /**
- * Created by lenovo on 2018/2/5.
+ * Created by XinNoil on 2018/2/5.
  */
 
 public class LocateRequest {
-    private int rSn;
-    private long rTimestamp;
+    private static final String TAG="IndoorLocationService";
+    private int sn;
+    private long timestamp;
     private LocationData[] locationData;
-    private int rDataNum;
-    private int rDataTop;
-    //private LocationData magData;
-    public LocateRequest(int rId,long rTimestamp,int rDataNum){
-        this.rSn =rId;
-        this.rTimestamp=rTimestamp;
-        this.rDataNum=rDataNum;
-        this.locationData=new LocationData[rDataNum];
-        this.rDataTop=0;
+    private int dataNum;
+    private int dataTop;
+
+    public LocateRequest(int sn,long timestamp,int dataNum){
+        this.sn =sn;
+        this.timestamp=timestamp;
+        this.dataNum=dataNum;
+        this.locationData=new LocationData[dataNum];
+        this.dataTop=0;
     }
-    public boolean addLocationData(LocationData locationData){
-        if(rDataTop<rDataNum){
-            this.locationData[rDataTop++]=locationData;
-            return true;
+
+    public void addData(LocationData locationData){
+        if(dataTop<dataNum){
+            this.locationData[dataTop++]=locationData;
         }
-        else
-            return false;
+        else {
+            Log.w(TAG,"exceed the dataNum");
+        }
+    }
+
+    public int getSn(){
+        return this.sn;
+    }
+
+    public long getTimestamp(){
+        return this.timestamp;
+    }
+    public LocationData[] getLocationData(){
+        return this.locationData;
     }
 }

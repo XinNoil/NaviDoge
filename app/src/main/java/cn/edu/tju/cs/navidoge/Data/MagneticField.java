@@ -5,17 +5,24 @@ package cn.edu.tju.cs.navidoge.Data;
  */
 
 public class MagneticField {
-    double mx,my,mz;
-    double hx,hy,hz;
-    public void setMagnetic_h(double[] hm){
-        hx=hm[0];
-        hy=hm[1];
-        hz=hm[2];
+    private static double[] mag=new double[3];
+    private static double[] hmag=new double[3];
+    public static void setMag(float[] value){
+        mag[0]= value[0];
+        mag[1]= value[1];
+        mag[2]= value[2];
     }
-    public double getHxy(){
-        return Math.sqrt(hx*hx+hy*hy);
+    public static double[] get2DMagnetic(){
+        hmag=Gravity.getTransform(mag);
+        double res[]=new double[2];
+        res[0]=getHxy();
+        res[1]=getHz();
+        return res;
     }
-    public double getHz(){
-        return hz;
+    public static double getHxy(){
+        return Math.sqrt(hmag[0]*hmag[0]+hmag[1]*hmag[1]);
+    }
+    public static double getHz(){
+        return hmag[2];
     }
 }

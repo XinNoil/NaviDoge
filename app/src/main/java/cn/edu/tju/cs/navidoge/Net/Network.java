@@ -21,29 +21,27 @@ import okhttp3.Response;
  */
 
 public class Network {
-    public String ipAddress="123.206.89.235";
-    public int port=8080;
-    private OkHttpClient client=new OkHttpClient();
-    public void sendMessage(Handler handler,int what,Bundle bundle){
+    public static String ipAddress="123.206.89.235";
+    public static int port=8080;
+    private static OkHttpClient client=new OkHttpClient();
+    public static void sendMessage(Handler handler,int what,Bundle bundle){
         Message message = new Message();
         message.what= what;
         message.setData(bundle);
         handler.sendMessage(message);
     }
-    public String setIPAddress(){
-        this.ipAddress="123.206.89.235";
-        MyApp.toastText("IP "+this.ipAddress);
-        return this.ipAddress;
+    public static void setIPAddress(){
+        ipAddress="123.206.89.235";
+        MyApp.toastText("IP "+ipAddress);
     }
-    public String setIPAddress(String ipAddress){
-        this.ipAddress=ipAddress;
-        MyApp.toastText("IP "+this.ipAddress);
-        return this.ipAddress;
+    public static void setIPAddress(String ip){
+        ipAddress=ip;
+        MyApp.toastText("IP "+ipAddress);
     }
-    public String getIPAddress(){
+    public static String getIPAddress(){
         return ipAddress;
     }
-    public void getRequest(String path,final Handler handler,final int what){
+    public static void getRequest(String path,final Handler handler,final int what){
         Callback callback=new Callback(){
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -51,19 +49,19 @@ public class Network {
                 bundle.putString("Response",response.toString());
                 bundle.putString("Body",response.body().string());
                 bundle.putInt("Status",1);
-                MyApp.getNetwork().sendMessage(handler,what,bundle);
+                Network.sendMessage(handler,what,bundle);
             }
             @Override
             public void onFailure(Call call,IOException e){
                 Bundle bundle=new Bundle();
                 bundle.putInt("Status",0);
-                MyApp.getNetwork().sendMessage(handler,what,bundle);
+                Network.sendMessage(handler,what,bundle);
             }
         };
         Request request = new Request.Builder().url("http://" + ipAddress + ":" + port + "/" + path).build();
         client.newCall(request).enqueue(callback);
     }
-    public void postRequest(String path,final Handler handler,final int what,String json){
+    public static void postRequest(String path,final Handler handler,final int what,String json){
         Callback callback=new Callback(){
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -71,13 +69,13 @@ public class Network {
                 bundle.putString("Response",response.toString());
                 bundle.putString("Body",response.body().string());
                 bundle.putInt("Status",1);
-                MyApp.getNetwork().sendMessage(handler,what,bundle);
+                Network.sendMessage(handler,what,bundle);
             }
             @Override
             public void onFailure(Call call,IOException e){
                 Bundle bundle=new Bundle();
                 bundle.putInt("Status",0);
-                MyApp.getNetwork().sendMessage(handler,what,bundle);
+                Network.sendMessage(handler,what,bundle);
             }
         };
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),json);

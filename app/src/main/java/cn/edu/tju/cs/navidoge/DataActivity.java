@@ -15,6 +15,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.tju.cs.navidoge.Data.DataControl;
+import cn.edu.tju.cs.navidoge.Data.GPSScan;
+import cn.edu.tju.cs.navidoge.Data.WiFiScan;
+
 public class DataActivity extends AppCompatActivity {
     public int Num=10;
     public Button[] buttons=new Button[Num];
@@ -25,11 +29,9 @@ public class DataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_data);
         setButtons();
         setViews();
-        MyApp.getDataControl().setContext(this);
-        MyApp.getDataControl().initWiFiScan();
-        MyApp.getDataControl().getWiFiScan().OpenWifi();
-        MyApp.getDataControl().timer();
-        askPermission();
+        WiFiScan.OpenWifi();
+        DataControl.timer();
+        DataControl.getGpsScan().askPermission(this);
     }
     private void setButtons(){
         ButtonListener buttonListener=new ButtonListener();
@@ -38,7 +40,7 @@ public class DataActivity extends AppCompatActivity {
         buttons[2]=findViewById(R.id.button3);
         buttons[3]=findViewById(R.id.button4);
         buttons[4]=findViewById(R.id.button_sensor);
-        buttons[4].setText("ALL");
+        buttons[4].setText(R.string.button_sensor_default);
         buttons[5]=findViewById(R.id.button6);
         buttons[6]=findViewById(R.id.button7);
         buttons[7]=findViewById(R.id.button8);
@@ -50,41 +52,24 @@ public class DataActivity extends AppCompatActivity {
     public void setViews(){
         textViews[0]=findViewById(R.id.status_panel);
         textViews[1]=findViewById(R.id.debug_panel);
-        MyApp.getDataControl().textViews=textViews;
+        DataControl.textViews=textViews;
     }
     class ButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v){
             switch (v.getId()){
                 case R.id.button_sensor:
-                    buttons[4].setText(MyApp.getDataControl().changIndex());
+                    buttons[4].setText(DataControl.changIndex());
             }
         }
     }
-    private void askPermission(){
-        List<String> permissionList = new ArrayList<>();
-        if(ContextCompat.checkSelfPermission(MyApp.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if(ContextCompat.checkSelfPermission(MyApp.getContext(), Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED){
-            permissionList.add(Manifest.permission.READ_PHONE_STATE);
-        }
-        if(ContextCompat.checkSelfPermission(MyApp.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if(!permissionList.isEmpty()){
-            String [] permissions = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(DataActivity.this, permissions, 1);
-        }
-        else{
-            MyApp.getDataControl().getGpsScan().requestLocation();
-        }
-    }
+
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        MyApp.getDataControl().getGpsScan().getmLocationClient().stop();
+        DataControl.getGpsScan().getmLocationClient().stop();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -98,7 +83,7 @@ public class DataActivity extends AppCompatActivity {
                             return;
                         }
                     }
-                    MyApp.getDataControl().getGpsScan().requestLocation();
+                    DataControl.getGpsScan().requestLocation();
                 }
                 else{
                     Toast.makeText(this, "发生未知错误", Toast.LENGTH_SHORT).show();

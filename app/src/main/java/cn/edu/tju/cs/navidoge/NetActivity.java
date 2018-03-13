@@ -11,10 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.sql.Timestamp;
 
+import cn.edu.tju.cs.navidoge.Data.DataControl;
+import cn.edu.tju.cs.navidoge.Data.WiFiScan;
 import cn.edu.tju.cs.navidoge.Net.LocateRequest;
 import cn.edu.tju.cs.navidoge.Net.LocationData;
+import cn.edu.tju.cs.navidoge.Net.Network;
 
 public class NetActivity extends AppCompatActivity {
     public static final int SHOW_TEXT =1;
@@ -22,6 +26,7 @@ public class NetActivity extends AppCompatActivity {
     public int buttonNum=10;
     public Button[] buttons=new Button[buttonNum];
     public TextView[] textView=new TextView[1];
+    private final MHandler handler = new MHandler(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,33 +41,42 @@ public class NetActivity extends AppCompatActivity {
                 buttons[i].setOnClickListener(buttonListener);
         }
         textView[0]=findViewById(R.id.debugView);
-        MyApp.getDataControl().setContext(this);
-        MyApp.getDataControl().initWiFiScan();
-        MyApp.getDataControl().getWiFiScan().OpenWifi();
+        WiFiScan.OpenWifi();
     }
-    private Handler handler= new Handler(){
+
+    private static class MHandler extends Handler{
+        private final WeakReference <NetActivity> mActivity;
+
+        MHandler(NetActivity activity) {
+            mActivity = new WeakReference<NetActivity>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg){
-            switch (msg.what){
-                case SHOW_TEXT:
-                    MyApp.toastText(msg.getData().toString());
-                    textView[0].setText(msg.getData().toString());
-                    break;
-                case SET_BSSIDS:
-                    if (msg.getData().getInt("Status")==1){
-                        MyApp.getDataControl().setBssidBundle(msg.getData().getString("Body"));
-                        textView[0].setText(MyApp.getDataControl().getBssidBundle().toString());
-                    }
-                    MyApp.toastText(msg.getData().toString());
+            NetActivity activity = mActivity.get();
+            if (activity != null) {
+                switch (msg.what){
+                    case SHOW_TEXT:
+                        MyApp.toastText(msg.getData().toString());
+                        activity.textView[0].setText(msg.getData().toString());
+                        break;
+                    case SET_BSSIDS:
+                        if (msg.getData().getInt("Status")==1){
+                            DataControl.setBssidBundle(msg.getData().getString("Body"));
+                            activity.textView[0].setText(DataControl.getBssidBundle().toString());
+                        }
+                        MyApp.toastText(msg.getData().toString());
+                }
             }
         }
-    };
+    }
+    
     class ButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v){
             switch (v.getId()){
                 case R.id.button_get_time:
-                    MyApp.getNetwork().getRequest("time",handler,SHOW_TEXT);
+                    Network.getRequest("time",handler,SHOW_TEXT);
                     break;
                 case R.id.button_set_ip:
                     AlertDialog.Builder dialog = new AlertDialog.Builder(NetActivity.this);
@@ -73,32 +87,33 @@ public class NetActivity extends AppCompatActivity {
                     dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            MyApp.getNetwork().setIPAddress(editText.getText().toString());
+                            Network.setIPAddress(editText.getText().toString());
                         }
                     });
                     dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            MyApp.getNetwork().setIPAddress();
+                            Network.setIPAddress();
                         }
                     });
                     dialog.show();
                     break;
                 case R.id.button_get_bssids:
-                    MyApp.getNetwork().getRequest("bssids",handler,SET_BSSIDS);
+                    Network.getRequest("bssids",handler,SET_BSSIDS);
                     break;
                 case R.id.button_send_json:
                     int time = (int) (System.currentTimeMillis());
                     Timestamp tsTemp = new Timestamp(time);
                     LocateRequest locateRequest=new LocateRequest(1,tsTemp.getTime(),2);
-                    LocationData rssiData=new LocationData(MyApp.getDataControl().getWiFiScan().getScanResults(), MyApp.getDataControl().getBssidBundle());
+                    LocationData rssiData=new LocationData(WiFiScan.getScanResults(), DataControl.getBssidBundle());
                     LocationData magData=new LocationData(2);
-                    locateRequest.addLocationData(rssiData);
-                    locateRequest.addLocationData(magData);
+                    locateRequest.addData(rssiData);
+                    locateRequest.addData(magData);
                     MyApp.toastText(MyApp.toGson(locateRequest));
-                    MyApp.getNetwork().postRequest("locate",handler,SHOW_TEXT,MyApp.toGson(locateRequest));
+                    Network.postRequest("locate",handler,SHOW_TEXT,MyApp.toGson(locateRequest));
                     break;
             }
         }
     }
+
 }

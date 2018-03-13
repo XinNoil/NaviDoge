@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".DemoActivity">
+
+    <item
+        android:id="@+id/action_set_ip"
+        android:title="设置IP地址"
+        app:showAsAction="never"/>
+
     <item
         android:id="@+id/action_net_test"
         android:title="网络连接测试"
@@ -11,5 +17,20 @@
     <item
         android:id="@+id/action_send_message"
         android:title="服务通信测试"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_building_test"
+        android:title="建筑类测试"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_area_test"
+        android:title="区域类测试"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_locate_conf"
+        android:title="定位配置测试"
         app:showAsAction="never"/>
 </menu>

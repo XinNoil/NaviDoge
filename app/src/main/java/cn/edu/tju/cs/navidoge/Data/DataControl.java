@@ -18,51 +18,39 @@ import cn.edu.tju.cs.navidoge.MyApp;
 
 public class DataControl implements Serializable {
     public int Num = 10;
+    static public TextView[] textViews;
     private static int index = 0;
     private static int state = 0;
     private static Sensors sensors = new Sensors();
-    private static WiFiScan wiFiScan;
     private static GPSScan gpsScan = new GPSScan();
     private static Bundle bssidBundle = new Bundle();
-    public int time_gap = 1000;
-    public TextView[] textViews;
-    Handler handler = new Handler();
-    private Context context;
+    private static int time_gap = 1000;
+    private static Handler handler = new Handler();
     private static Gson gson = new Gson();
 
     public DataControl() {
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    public static WiFiScan getWiFiScan() {
-        return wiFiScan;
     }
 
     public static GPSScan getGpsScan() {
         return gpsScan;
     }
 
-    public void initWiFiScan() {
-        wiFiScan = new WiFiScan(context);
-    }
 
-    public void timer() {
+    public static void timer() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 handler.postDelayed(this, time_gap);
                 switch (state) {
                     case 0:
-                        textViews[1].setText(sensors.getCurrentDisplayAll() + wiFiScan.getCurrentDisplay() + gpsScan.getCurrentDisplay());
+                        String temp=sensors.getCurrentDisplayAll() + WiFiScan.getCurrentDisplay() + gpsScan.getCurrentDisplay();
+                        textViews[1].setText(temp);
                         break;
                     case 1:
                         textViews[1].setText(sensors.getCurrentDisplay());
                         break;
                     case 2:
-                        textViews[1].setText(wiFiScan.getCurrentDisplay());
+                        textViews[1].setText(WiFiScan.getCurrentDisplay());
                         break;
                     case 3:
                         textViews[1].setText(gpsScan.getCurrentDisplay());
@@ -73,7 +61,7 @@ public class DataControl implements Serializable {
         handler.postDelayed(runnable, time_gap);
     }
 
-    public String changIndex() {
+    public static String changIndex() {
         index = (index + 1) % (sensors.getSensor_num() + 3);
         if (index <= 0) {
             state = 0;
@@ -93,20 +81,16 @@ public class DataControl implements Serializable {
         }
     }
 
-    public void setBssidBundle(Bundle bssidBundle) {
-        this.bssidBundle = bssidBundle;
-    }
-
-    public Bundle getBssidBundle() {
+    public static Bundle getBssidBundle() {
         return bssidBundle;
     }
 
-    public void setBssidBundle(String bssidList) {
+    public static void setBssidBundle(String bssidList) {
         String[] bssidStrings = gson.fromJson(bssidList, String[].class);
         Bundle bundle = new Bundle();
         for (int i = 0; i < bssidStrings.length; i++) {
             bundle.putInt(bssidStrings[i], i);
         }
-        setBssidBundle(bundle);
+        bssidBundle = bundle;
     }
 }

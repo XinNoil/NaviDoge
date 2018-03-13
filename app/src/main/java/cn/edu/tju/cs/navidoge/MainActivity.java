@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import cn.edu.tju.cs.navidoge.Data.DataControl;
+import cn.edu.tju.cs.navidoge.Data.GPSScan;
+
 public class MainActivity extends AppCompatActivity {
     public int buttonNum=10;
     public Button[] buttons=new Button[buttonNum];
@@ -14,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setButtons();
+        DataControl.getGpsScan().askPermission(this);
         //MyApp.toastText("context is available");
     }
     private void setButtons(){

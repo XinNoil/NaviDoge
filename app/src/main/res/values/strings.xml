@@ -2,4 +2,5 @@
     <string name="app_name">NaviDoge</string>
     <string name="title_activity_demo">DemoActivity</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="button_sensor_default">ALL</string>
 </resources>

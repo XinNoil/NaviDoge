@@ -1,6 +1,7 @@
 package cn.edu.tju.cs.navidoge;
 
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -8,34 +9,41 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.SearchView;
-
 import com.jiahuan.svgmapview.SVGMapView;
 import com.jiahuan.svgmapview.SVGMapViewListener;
-
+import cn.edu.tju.cs.navidoge.Data.Area;
+import cn.edu.tju.cs.navidoge.Data.Building;
+import cn.edu.tju.cs.navidoge.Net.Network;
 import cn.edu.tju.cs.navidoge.UI.AssetsHelper;
 
 public class DemoActivity extends AppCompatActivity {
-    private static final String TAG="DemoActivity";
+    private static final String TAG = "DemoActivity";
     private static SVGMapView mapView;
-    private static IndoorLocationService.IndoorLocationBinder mBinder;
-    private static MHandler mHandler=new MHandler();
-    private ServiceConnection connection =new ServiceConnection() {
+    private static IndoorLocationService.IndoorLocationBinder indoorLocationBinder;
+    private static MHandler mHandler = new MHandler();
+    private static float[] loc = new float[2];
+    private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mBinder= (IndoorLocationService.IndoorLocationBinder) iBinder;
-            mBinder.setMessenger(mHandler);
-            mBinder.initDataControl(DemoActivity.this);
+            indoorLocationBinder = (IndoorLocationService.IndoorLocationBinder) iBinder;
+            indoorLocationBinder.setMessenger(mHandler);
+            indoorLocationBinder.initDataControl();
+            indoorLocationBinder.askGPSPermission(DemoActivity.this);
         }
 
         @Override
@@ -48,18 +56,27 @@ public class DemoActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 1:
-                    MyApp.toastText("Servicing");
+                case IndoorLocationService.SHOW_TEXT:
+                    MyApp.toastText(msg.getData().toString());
                     break;
-                case 2:
-                    String locationString=msg.getData().getString("Location");
+                case IndoorLocationService.SET_LOCATION:
+                    String locationString = msg.getData().getString("Location");
                     //MyApp.toastText(locationString);
-                    float[] location=MyApp.getGson().fromJson(locationString,float[].class);
-                    MyApp.toastText(String.valueOf(location[0])+" "+String.valueOf(location[1]));
-                    location[0]=(location[0]+1.34f)*3.52f;
-                    location[1]=(location[1]+7.5f)*3.52f;
-                    mapView.setLocationOverlay(location);
+                    float[] location = MyApp.getGson().fromJson(locationString, float[].class);
+                    //MyApp.toastText(String.valueOf(location[0])+" "+String.valueOf(location[1]));
+                    loc[0] = (location[0] + 1.34f) * 3.52f;
+                    loc[1] = (location[1] + 7.5f) * 3.52f;
+                    mapView.setLocationOverlay(loc);
                     mapView.refresh();
+                    break;
+                case IndoorLocationService.LOAD_MAP:
+                    boolean local = msg.getData().getBoolean("local");
+                    if (local) {
+                        mapView.loadMap(AssetsHelper.getContent(msg.getData().getString("filename")));
+                    } else {
+                        mapView.loadMap(msg.getData().getString("floor_plan"));
+                    }
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -69,41 +86,50 @@ public class DemoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_demo);
-
-        SearchView mSearchView = (SearchView) findViewById(R.id.searchView);
+        SearchView mSearchView = findViewById(R.id.searchView);
         mSearchView.setFocusable(false);
         mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if(b){
-                    Intent intent=new Intent(DemoActivity.this,SearchActivity.class);
+                if (b) {
+                    Intent intent = new Intent(DemoActivity.this, SearchActivity.class);
                     startActivity(intent);
                 }
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBinder.getLocation();
+                indoorLocationBinder.getLocation();
+                mapView.locationCenter(loc[0], loc[1]);
             }
         });
 
         initSVGMapView();
-        mapView.loadMap(AssetsHelper.getContent(this, "55_5.svg"));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("local", true);
+        bundle.putString("filename", "demo.svg");
+        Message msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
+        msg.setData(bundle);
+        try {
+            new Messenger(mHandler).send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
-        CoordinatorLayout coordinatorLayout=findViewById(R.id.coordinatorLayout);
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinatorLayout);
         Intent bindIntent = new Intent(DemoActivity.this, IndoorLocationService.class);
-        bindService(bindIntent,connection,BIND_AUTO_CREATE);
-        Snackbar.make(coordinatorLayout , "Indoor location service start.", Snackbar.LENGTH_LONG)
+        bindService(bindIntent, connection, BIND_AUTO_CREATE);
+        Snackbar.make(coordinatorLayout, "Indoor location service start.", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 
-    public void initSVGMapView(){
-        mapView = (SVGMapView) findViewById(R.id.mapView);
+    public void initSVGMapView() {
+        mapView = findViewById(R.id.mapView);
         mapView.registerMapViewListener(new SVGMapViewListener() {
             @Override
             public void onMapLoadComplete() {
@@ -137,6 +163,7 @@ public class DemoActivity extends AppCompatActivity {
 
             @Override
             public void onClick(MotionEvent event) {
+                //TODO CENTER POSITION
 //                float XY[] = mapView.getMapCoordinateWithScreenCoordinate(event.getX(), event.getY());
 //                MyApp.toastText("onClick: \n"
 //                        + "On Screen{ x=" + String.valueOf(event.getX()) + " y=" + String.valueOf(event.getY()) + " } \n"
@@ -151,31 +178,31 @@ public class DemoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG,"onStart");
+        Log.d(TAG, "onStart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop");
+        Log.d(TAG, "onStop");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG,"onRestart");
+        Log.d(TAG, "onRestart");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy");
+        Log.d(TAG, "onDestroy");
         unbindService(connection);
     }
 
@@ -186,11 +213,53 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        String str;
         switch (item.getItemId()) {
             case R.id.action_net_test:
+                Network.getRequest("time",mHandler,IndoorLocationService.SHOW_TEXT);
                 break;
             case R.id.action_send_message:
-                mBinder.sendMessage();
+                indoorLocationBinder.sendMessage();
+                break;
+            case R.id.action_building_test:
+                Building building = new Building();
+                str=MyApp.toGson(building);
+                Log.i(TAG,str);
+                MyApp.toastText(str);
+                break;
+            case R.id.action_area_test:
+                Area area = new Area();
+                str=MyApp.toGson(area);
+                Log.i(TAG,str);
+                MyApp.toastText(str);
+                break;
+            case  R.id.action_locate_conf:
+                Bundle locateEngineConf=new Bundle();
+                locateEngineConf.putString("Method","RADAR");
+                locateEngineConf.putInt("K",3);
+                str=MyApp.getJsonWithBundle(locateEngineConf);
+                Log.i(TAG,str);
+                MyApp.toastText(str);
+                break;
+            case R.id.action_set_ip:
+                AlertDialog.Builder dialog = new AlertDialog.Builder(DemoActivity.this);
+                dialog.setTitle("IP setting");
+                final EditText editText = new EditText(DemoActivity.this);
+                dialog.setView(editText);
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Network.setIPAddress(editText.getText().toString());
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Network.setIPAddress();
+                    }
+                });
+                dialog.show();
                 break;
         }
         return true;

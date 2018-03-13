@@ -9,94 +9,46 @@ import android.os.Bundle;
 import java.util.List;
 
 import cn.edu.tju.cs.navidoge.MainActivity;
+import cn.edu.tju.cs.navidoge.MyApp;
 
 /**
  * Created by lenovo on 2018/2/5.
  */
 
-public class WiFiScan{
-    WifiManager wm;
-    List<ScanResult> wl;
-    public StringBuilder display;
-    public StringBuilder output;
-    public boolean isRecord;
-    public int recordNo=0;
-    public int targetNo=1000000;
+public class WiFiScan {
+    private static WifiManager wm = (WifiManager) MyApp.getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-    //构造函数
-    public  WiFiScan(Context context)
-    {
-        wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        output=new StringBuilder();
-        isRecord=false;
-
-    }
     //打开WIFI
-    public void OpenWifi()
-    {
-        if (!wm.isWifiEnabled())
-        {
+    public static void OpenWifi() {
+        if (!wm.isWifiEnabled()) {
             wm.setWifiEnabled(true);
         }
     }
-    //关闭WIFI
-    public void CloseWifi()
-    {
-        if (wm.isWifiEnabled())
-        {
-            wm.setWifiEnabled(false);
-        }
-    }
-    public boolean timeUp(){
-        if (recordNo>targetNo)
-            return true;
-        else
-            return false;
-    }
 
-    public List<ScanResult> getScanResults(){
+    public static List<ScanResult> getScanResults() {
         wm.startScan();
-        wl=wm.getScanResults();
+        List<ScanResult> wl = wm.getScanResults();
         return wl;
     }
 
-    public String[] getDisplayOutput(){
-        String [] strings=new String[2];
-        StringBuilder str1=new StringBuilder();
-        int min_sup=-90;
-        for (ScanResult result: wl){
-            if(result.level>=min_sup){
-                str1.append(" "+result.BSSID);
-                str1.append(" "+result.level);
-                str1.append(" "+result.frequency);
-
-                str1.append("\n");
-            }
+    public static String[] getBssids() {
+        List<ScanResult> wl = getScanResults();
+        String[] bssids = new String[wl.size()];
+        for (int i = 0; i < wl.size(); i++) {
+            bssids[i] = wl.get(i).BSSID;
         }
-        strings[1]=str1.toString();
-        strings[0]="Total : "+targetNo+"\nCurrent:"+recordNo+"\n";
-
-        return strings;
+        return bssids;
     }
 
-    public void updateOutput() {
-        if (isRecord) {
-            for (ScanResult result : wl) {
-                //output.append(result.BSSID+" "+result.level+" "+result.frequency+" "+result.timestamp+" "+(recordNo)+" "+result.SSID+"\n");
-                output.append((recordNo) + " " + result.BSSID + " " + result.level + " " + result.frequency + "\n");
-            }
-            recordNo++;
-        }
-    }
-    public String getCurrentDisplay(){
-        getScanResults();
-        display=new StringBuilder();
-        int min_sup=-90;
-        for (ScanResult result: wl){
-            if(result.level>=min_sup){
-                display.append(" "+result.BSSID);
-                display.append(" "+result.level);
-                display.append(" "+result.frequency);
+    static String getCurrentDisplay() {
+        List<ScanResult> wl = getScanResults();
+        StringBuilder display = new StringBuilder();
+        int min_sup = -90;
+        for (ScanResult result : wl) {
+            if (result.level >= min_sup) {
+                display.append(" ").append(result.BSSID);
+                display.append(" ").append(result.level);
+                display.append(" ").append(result.frequency);
 
                 display.append("\n");
             }

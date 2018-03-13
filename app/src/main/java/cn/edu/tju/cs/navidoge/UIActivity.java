@@ -73,7 +73,7 @@ public class UIActivity extends AppCompatActivity {
                 mapView.refresh();
             }
         });
-        mapView.loadMap(AssetsHelper.getContent(this, "55_5.svg"));
+        mapView.loadMap(AssetsHelper.getContent("demo.svg"));
     }
 
     @Override

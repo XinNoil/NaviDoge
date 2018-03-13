@@ -135,4 +135,8 @@ public class SVGMapView extends FrameLayout {
         mapInfo.append("Size: "+mapMainView.getFloorMap().getWidth()+" "+mapMainView.getFloorMap().getHeight());
         return mapInfo.toString();
     }
+
+    public void locationCenter(float x,float y){
+        mapMainView.locationCenter(x,y);
+    }
 }
