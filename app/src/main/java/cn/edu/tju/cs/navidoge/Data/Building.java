@@ -6,6 +6,7 @@ import android.os.Bundle;
  * Created by XinNoil on 2018/3/13.
  */
 
+//建筑信息
 public class Building {
     private int id;
     private String name;
@@ -18,5 +19,8 @@ public class Building {
         this.geographicLocation=new double[2];
         geographicLocation[0]=39.0057055878;
         geographicLocation[1]=117.3206219345;
+    }
+    public String getAddress(){
+        return address;
     }
 }

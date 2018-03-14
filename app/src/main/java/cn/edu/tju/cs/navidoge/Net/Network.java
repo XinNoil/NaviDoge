@@ -20,65 +20,74 @@ import okhttp3.Response;
  * NetWork Module
  */
 
+//网络模块
 public class Network {
-    public static String ipAddress="123.206.89.235";
-    public static int port=8080;
-    private static OkHttpClient client=new OkHttpClient();
-    public static void sendMessage(Handler handler,int what,Bundle bundle){
+    public static String ipAddress = "1.1.1.106";
+    public static int port = 8080;
+    private static OkHttpClient client = new OkHttpClient();
+
+    public static void sendMessage(Handler handler, int what, Bundle bundle) {
         Message message = new Message();
-        message.what= what;
+        message.what = what;
         message.setData(bundle);
         handler.sendMessage(message);
     }
-    public static void setIPAddress(){
-        ipAddress="123.206.89.235";
-        MyApp.toastText("IP "+ipAddress);
+
+    public static void setIPAddress() {
+        ipAddress = "123.206.89.235";
+        MyApp.toastText("IP " + ipAddress);
     }
-    public static void setIPAddress(String ip){
-        ipAddress=ip;
-        MyApp.toastText("IP "+ipAddress);
+
+    public static void setIPAddress(String ip) {
+        ipAddress = ip;
+        MyApp.toastText("IP " + ipAddress);
     }
-    public static String getIPAddress(){
+
+    public static String getIPAddress() {
         return ipAddress;
     }
-    public static void getRequest(String path,final Handler handler,final int what){
-        Callback callback=new Callback(){
+
+    public static void getRequest(String path, final Handler handler, final int what) {
+        Callback callback = new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Bundle bundle=new Bundle();
-                bundle.putString("Response",response.toString());
-                bundle.putString("Body",response.body().string());
-                bundle.putInt("Status",1);
-                Network.sendMessage(handler,what,bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString("Response", response.toString());
+                bundle.putString("Body", response.body().string());
+                bundle.putInt("Status", 1);
+                Network.sendMessage(handler, what, bundle);
             }
+
             @Override
-            public void onFailure(Call call,IOException e){
-                Bundle bundle=new Bundle();
-                bundle.putInt("Status",0);
-                Network.sendMessage(handler,what,bundle);
+            public void onFailure(Call call, IOException e) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("Status", 0);
+                Network.sendMessage(handler, what, bundle);
             }
         };
         Request request = new Request.Builder().url("http://" + ipAddress + ":" + port + "/" + path).build();
         client.newCall(request).enqueue(callback);
     }
-    public static void postRequest(String path,final Handler handler,final int what,String json){
-        Callback callback=new Callback(){
+
+    public static void postRequest(String path, final Handler handler, final int what, String json) {
+        Callback callback = new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Bundle bundle=new Bundle();
-                bundle.putString("Response",response.toString());
-                bundle.putString("Body",response.body().string());
-                bundle.putInt("Status",1);
-                Network.sendMessage(handler,what,bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString("Response", response.toString());
+                bundle.putString("Body", response.body().string());
+                bundle.putInt("Status", 1);
+                Network.sendMessage(handler, what, bundle);
             }
+
             @Override
-            public void onFailure(Call call,IOException e){
-                Bundle bundle=new Bundle();
-                bundle.putInt("Status",0);
-                Network.sendMessage(handler,what,bundle);
+            public void onFailure(Call call, IOException e) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("Status", 0);
+                Network.sendMessage(handler, what, bundle);
             }
         };
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),json);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
         Request request = new Request.Builder().post(body).url("http://" + ipAddress + ":" + port + "/" + path).build();
         client.newCall(request).enqueue(callback);
     }

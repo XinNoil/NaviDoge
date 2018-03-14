@@ -6,6 +6,7 @@ import android.util.Log;
  * Created by XinNoil on 2018/2/5.
  */
 
+//位置请求类
 public class LocateRequest {
     private static final String TAG="IndoorLocationService";
     private int sn;

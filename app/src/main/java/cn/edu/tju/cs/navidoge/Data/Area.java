@@ -4,6 +4,7 @@ package cn.edu.tju.cs.navidoge.Data;
  * Created by XinNoil on 2018/3/13.
  */
 
+//区域信息
 public class Area {
     private int no;
     private String name;
@@ -22,5 +23,8 @@ public class Area {
         this.size=new double[2];
         this.size[0]=113.380;
         this.size[1]=19.180;
+    }
+    public String getName(){
+        return this.name;
     }
 }

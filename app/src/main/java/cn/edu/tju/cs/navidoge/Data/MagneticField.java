@@ -4,6 +4,7 @@ package cn.edu.tju.cs.navidoge.Data;
  * Created by lenovo on 2018/2/6.
  */
 
+//地磁模块
 public class MagneticField {
     private static double[] mag=new double[3];
     private static double[] hmag=new double[3];

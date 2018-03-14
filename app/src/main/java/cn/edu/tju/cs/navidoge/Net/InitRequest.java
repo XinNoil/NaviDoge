@@ -4,6 +4,7 @@ package cn.edu.tju.cs.navidoge.Net;
  * Created by XinNoil on 2018/3/9.
  */
 
+//初始化请求类
 public class InitRequest {
     private long timestamp;
     private double[] geographicLocation;

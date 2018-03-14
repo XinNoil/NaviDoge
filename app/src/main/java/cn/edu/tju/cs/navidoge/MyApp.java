@@ -25,6 +25,7 @@ import cn.edu.tju.cs.navidoge.Net.Network;
  * Created by lenovo on 2018/2/2.
  */
 
+//提供全局变量和函数
 public class MyApp extends Application {
     private static Context context;
     private static Gson gson = new Gson();

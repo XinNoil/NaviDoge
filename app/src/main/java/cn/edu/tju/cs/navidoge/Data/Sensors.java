@@ -14,6 +14,7 @@ import cn.edu.tju.cs.navidoge.MyApp;
  * Created by XinNoil on 2018/2/5.
  */
 
+//传感器模块
 public class Sensors extends Activity implements SensorEventListener {
     public java.text.DecimalFormat df = new java.text.DecimalFormat("#0.00");
     public boolean haveGravity = false;

@@ -15,9 +15,15 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Timestamp;
 
+import cn.edu.tju.cs.navidoge.Data.Area;
+import cn.edu.tju.cs.navidoge.Data.Building;
 import cn.edu.tju.cs.navidoge.Data.DataControl;
+import cn.edu.tju.cs.navidoge.Data.Floorplan;
 import cn.edu.tju.cs.navidoge.Data.GPSScan;
 import cn.edu.tju.cs.navidoge.Data.MagneticField;
 import cn.edu.tju.cs.navidoge.Data.WiFiScan;
@@ -26,6 +32,7 @@ import cn.edu.tju.cs.navidoge.Net.LocateRequest;
 import cn.edu.tju.cs.navidoge.Net.LocationData;
 import cn.edu.tju.cs.navidoge.Net.Network;
 
+//定位服务
 public class IndoorLocationService extends Service {
     private static final String TAG = "IndoorLocationService";
     private static Handler tHandler = new Handler();
@@ -59,6 +66,38 @@ public class IndoorLocationService extends Service {
                 case INITIAL_SERVICE:
                     isInit = true;
                     MyApp.toastText(msg.getData().toString());
+                    Log.i(TAG,msg.getData().toString());
+                    try {
+                        JSONObject json=new JSONObject(msg.getData().getString("Body"));
+                        Building building=MyApp.getGson().fromJson(json.getString("building"),Building.class);
+                        DataControl.setBuilding(building);
+                        Area area=MyApp.getGson().fromJson(json.getString("area"),Area.class);
+                        DataControl.setArea(area);
+                        DataControl.setBssidBundle(json.getString("bssids"));
+                        DataControl.setLocateEngineConf(json.getString("locateEngineConf"));
+                        Floorplan floorplan=new Floorplan(json.getString("floorplan"));
+                        DataControl.setFloorplan(floorplan);
+
+                        Log.d(TAG,json.toString());
+                        Log.d(TAG,DataControl.getBuilding().getAddress());
+                        Log.d(TAG,DataControl.getArea().getName());
+                        Log.d(TAG,"Bundle Size: "+String.valueOf(DataControl.getBssidBundle().size()));
+                        Log.d(TAG,MyApp.getJsonWithBundle(DataControl.getLocateEngineConf()));
+                        Log.d(TAG,DataControl.getFloorplan().getFilename());
+
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean("local", false);
+                        Message n_msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
+                        n_msg.setData(bundle);
+                        try {
+                            messenger.send(n_msg);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
                     break;
                 case GET_BSSIDS:
                     if (msg.getData().getInt("Status") == 1) {
@@ -107,7 +146,7 @@ public class IndoorLocationService extends Service {
             InitRequest initRequest = new InitRequest(ts.getTime(), GPSScan.getGeoLocation(), WiFiScan.getBssids());
             Log.i(TAG, MyApp.toGson(initRequest));
             //MyApp.toastText(MyApp.toGson(initRequest));
-            //Network.postRequest("initial", nHandler, INITIAL_SERVICE, MyApp.toGson(initRequest));
+            Network.postRequest("initial", nHandler, INITIAL_SERVICE, MyApp.toGson(initRequest));
         }
 
         void getLocation() {
@@ -140,8 +179,9 @@ public class IndoorLocationService extends Service {
             }
         }
 
-        void initDataControl() {
+        void initDataControl(Activity activity) {
             WiFiScan.OpenWifi();
+            askGPSPermission(activity);
         }
 
         void askGPSPermission(Activity activity){DataControl.getGpsScan().askPermission(activity);}

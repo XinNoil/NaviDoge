@@ -33,4 +33,10 @@
         android:id="@+id/action_locate_conf"
         android:title="定位配置测试"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_initial"
+        android:title="初始化定位请求"
+        app:showAsAction="never"/>
+
 </menu>

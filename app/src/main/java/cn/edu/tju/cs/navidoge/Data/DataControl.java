@@ -26,8 +26,11 @@ public class DataControl implements Serializable {
     private static int time_gap = 1000;
     private static Handler handler = new Handler();
     private static Gson gson = new Gson();
-    private static Bundle locateEngineConf=new Bundle();
+    private static Bundle locateEngineConf = new Bundle();
     private static Bundle bssidBundle = new Bundle();
+    private static Building building;
+    private static Area area;
+    private static Floorplan floorplan;
 
     public DataControl() {
     }
@@ -44,7 +47,7 @@ public class DataControl implements Serializable {
                 handler.postDelayed(this, time_gap);
                 switch (state) {
                     case 0:
-                        String temp=sensors.getCurrentDisplayAll() + WiFiScan.getCurrentDisplay() + gpsScan.getCurrentDisplay();
+                        String temp = sensors.getCurrentDisplayAll() + WiFiScan.getCurrentDisplay() + gpsScan.getCurrentDisplay();
                         textViews[1].setText(temp);
                         break;
                     case 1:
@@ -82,12 +85,12 @@ public class DataControl implements Serializable {
         }
     }
 
-    public static Bundle getLocateEngineConf(){
+    public static Bundle getLocateEngineConf() {
         return locateEngineConf;
     }
 
-    public static void setLocateEngineConf(String locateEngineConfStr){
-        locateEngineConf=MyApp.getBundleWithJson(locateEngineConfStr);
+    public static void setLocateEngineConf(String locateEngineConfStr) {
+        locateEngineConf = MyApp.getBundleWithJson(locateEngineConfStr);
     }
 
     public static Bundle getBssidBundle() {
@@ -101,5 +104,29 @@ public class DataControl implements Serializable {
             bundle.putInt(bssidStrings[i], i);
         }
         bssidBundle = bundle;
+    }
+
+    public static Building getBuilding() {
+        return building;
+    }
+
+    public static void setBuilding(Building _building) {
+        building = _building;
+    }
+
+    public static Area getArea() {
+        return area;
+    }
+
+    public static void setArea(Area _area) {
+        area = _area;
+    }
+
+    public static Floorplan getFloorplan() {
+        return floorplan;
+    }
+
+    public static void setFloorplan(Floorplan _floorplan) {
+        floorplan = _floorplan;
     }
 }

@@ -28,22 +28,23 @@ import com.jiahuan.svgmapview.SVGMapView;
 import com.jiahuan.svgmapview.SVGMapViewListener;
 import cn.edu.tju.cs.navidoge.Data.Area;
 import cn.edu.tju.cs.navidoge.Data.Building;
+import cn.edu.tju.cs.navidoge.Data.DataControl;
 import cn.edu.tju.cs.navidoge.Net.Network;
 import cn.edu.tju.cs.navidoge.UI.AssetsHelper;
 
+//demo界面
 public class DemoActivity extends AppCompatActivity {
     private static final String TAG = "DemoActivity";
     private static SVGMapView mapView;
     private static IndoorLocationService.IndoorLocationBinder indoorLocationBinder;
-    private static MHandler mHandler = new MHandler();
+    private static MHandler handler = new MHandler();
     private static float[] loc = new float[2];
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             indoorLocationBinder = (IndoorLocationService.IndoorLocationBinder) iBinder;
-            indoorLocationBinder.setMessenger(mHandler);
-            indoorLocationBinder.initDataControl();
-            indoorLocationBinder.askGPSPermission(DemoActivity.this);
+            indoorLocationBinder.setMessenger(handler);
+            indoorLocationBinder.initDataControl(DemoActivity.this);
         }
 
         @Override
@@ -74,7 +75,8 @@ public class DemoActivity extends AppCompatActivity {
                     if (local) {
                         mapView.loadMap(AssetsHelper.getContent(msg.getData().getString("filename")));
                     } else {
-                        mapView.loadMap(msg.getData().getString("floor_plan"));
+                        //mapView.loadMap(msg.getData().getString("floor_plan"));
+                        Log.d(TAG,"request floorplan:"+ DataControl.getFloorplan().getFilename());
                     }
                     break;
                 default:
@@ -117,7 +119,7 @@ public class DemoActivity extends AppCompatActivity {
         Message msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
         msg.setData(bundle);
         try {
-            new Messenger(mHandler).send(msg);
+            new Messenger(handler).send(msg);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -217,7 +219,7 @@ public class DemoActivity extends AppCompatActivity {
         String str;
         switch (item.getItemId()) {
             case R.id.action_net_test:
-                Network.getRequest("time",mHandler,IndoorLocationService.SHOW_TEXT);
+                Network.getRequest("time", handler,IndoorLocationService.SHOW_TEXT);
                 break;
             case R.id.action_send_message:
                 indoorLocationBinder.sendMessage();
@@ -268,6 +270,8 @@ public class DemoActivity extends AppCompatActivity {
                 });
                 dialog.show();
                 break;
+            case R.id.action_initial:
+                indoorLocationBinder.initialService();
         }
         return true;
     }

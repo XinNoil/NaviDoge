@@ -27,7 +27,7 @@ import cn.edu.tju.cs.navidoge.Net.InitRequest;
  * Created by XinNoil on 2018/2/5.
  */
 
-
+//GPS模块
 public class GPSScan {
     public boolean isReceivedLocation = false;
     private LocationClient mLocationClient;

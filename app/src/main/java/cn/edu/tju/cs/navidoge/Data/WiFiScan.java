@@ -15,6 +15,7 @@ import cn.edu.tju.cs.navidoge.MyApp;
  * Created by lenovo on 2018/2/5.
  */
 
+//WiFi模块
 public class WiFiScan {
     private static WifiManager wm = (WifiManager) MyApp.getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 

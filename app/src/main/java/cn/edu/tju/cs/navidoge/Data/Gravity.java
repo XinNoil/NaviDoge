@@ -4,6 +4,7 @@ package cn.edu.tju.cs.navidoge.Data;
  * Created by lenovo on 2018/2/6.
  */
 
+//重力模块
 public class Gravity {
     private static double[] ex= new double[3];
     private static double[] ey= new double[3];
