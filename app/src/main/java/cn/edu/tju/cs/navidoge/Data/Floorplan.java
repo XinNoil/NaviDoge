@@ -6,8 +6,8 @@ package cn.edu.tju.cs.navidoge.Data;
 
 public class Floorplan {
     private String filename;
-    private int width = 100;
-    private int height = 100;
+    private int width = 100; // (pixel)
+    private int height = 100; // (pixel)
     private String svg;
 
     public Floorplan(String filename) {
@@ -23,7 +23,7 @@ public class Floorplan {
     }
 
     public int getHeight() {
-        return this.width;
+        return this.height;
     }
 
     public String getSvg() {

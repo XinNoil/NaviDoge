@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.widget.SearchView;
 
 import com.jiahuan.svgmapview.SVGMapView;
@@ -41,7 +40,7 @@ public class DemoActivity extends AppCompatActivity {
     private static SVGMapView mapView;
     private static IndoorLocationService.IndoorLocationBinder indoorLocationBinder;
     private static MHandler handler = new MHandler();
-    private static float[] loc = new float[2];
+    private static float[] pixLoc = new float[2];
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -66,9 +65,8 @@ public class DemoActivity extends AppCompatActivity {
                 case IndoorLocationService.SET_LOCATION:
                     String locationString = msg.getData().getString("Location");
                     float[] location = MyApp.getGson().fromJson(locationString, float[].class);
-                    loc[0] = (location[0] + 1.34f) * 3.52f;
-                    loc[1] = (location[1] + 7.5f) * 3.52f;
-                    mapView.setLocationOverlay(loc);
+                    pixLoc =DataControl.getPixLoc(location);
+                    mapView.setLocationOverlay(pixLoc);
                     mapView.refresh();
                     Log.d(TAG,locationString);
                     Log.d(TAG,String.valueOf(location[0])+" "+String.valueOf(location[1]));
@@ -112,8 +110,8 @@ public class DemoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO CENTER POSITION
-                //indoorLocationBinder.getLocation();
-                //mapView.locationCenter(loc[0], loc[1]);
+                indoorLocationBinder.getLocation();
+                mapView.locationCenter();
             }
         });
 
