@@ -24,11 +24,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.SearchView;
+
 import com.jiahuan.svgmapview.SVGMapView;
 import com.jiahuan.svgmapview.SVGMapViewListener;
+
 import cn.edu.tju.cs.navidoge.Data.Area;
 import cn.edu.tju.cs.navidoge.Data.Building;
 import cn.edu.tju.cs.navidoge.Data.DataControl;
+import cn.edu.tju.cs.navidoge.Data.Floorplan;
 import cn.edu.tju.cs.navidoge.Net.Network;
 import cn.edu.tju.cs.navidoge.UI.AssetsHelper;
 
@@ -62,21 +65,23 @@ public class DemoActivity extends AppCompatActivity {
                     break;
                 case IndoorLocationService.SET_LOCATION:
                     String locationString = msg.getData().getString("Location");
-                    //MyApp.toastText(locationString);
                     float[] location = MyApp.getGson().fromJson(locationString, float[].class);
-                    //MyApp.toastText(String.valueOf(location[0])+" "+String.valueOf(location[1]));
                     loc[0] = (location[0] + 1.34f) * 3.52f;
                     loc[1] = (location[1] + 7.5f) * 3.52f;
                     mapView.setLocationOverlay(loc);
                     mapView.refresh();
+                    Log.d(TAG,locationString);
+                    Log.d(TAG,String.valueOf(location[0])+" "+String.valueOf(location[1]));
                     break;
                 case IndoorLocationService.LOAD_MAP:
                     boolean local = msg.getData().getBoolean("local");
                     if (local) {
-                        mapView.loadMap(AssetsHelper.getContent(msg.getData().getString("filename")));
+                        mapView.loadMap(DataControl.getFloorplan().getSvg());
                     } else {
-                        //mapView.loadMap(msg.getData().getString("floor_plan"));
-                        Log.d(TAG,"request floorplan:"+ DataControl.getFloorplan().getFilename());
+                        String svg=msg.getData().getString("floor_plan");
+                        DataControl.getFloorplan().setSvg(svg);
+                        mapView.loadMap(svg);
+                        Log.i(TAG, svg);
                     }
                     break;
                 default:
@@ -113,16 +118,7 @@ public class DemoActivity extends AppCompatActivity {
         });
 
         initSVGMapView();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("local", true);
-        bundle.putString("filename", "demo.svg");
-        Message msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
-        msg.setData(bundle);
-        try {
-            new Messenger(handler).send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+//        loadDemoMap();
 
         CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinatorLayout);
         Intent bindIntent = new Intent(DemoActivity.this, IndoorLocationService.class);
@@ -139,7 +135,9 @@ public class DemoActivity extends AppCompatActivity {
                 DemoActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DemoActivity.this, "onMapLoadComplete", Toast.LENGTH_LONG).show();
+                        Log.i(TAG, "onMapLoadComplete");
+                        DataControl.getFloorplan().setWidth(mapView.getFloorPlanWidth());
+                        DataControl.getFloorplan().setHeight(mapView.getFloorPlanHeight());
                     }
                 });
             }
@@ -149,7 +147,7 @@ public class DemoActivity extends AppCompatActivity {
                 DemoActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DemoActivity.this, "onMapLoadError", Toast.LENGTH_LONG).show();
+                        Log.i(TAG, "onMapLoadError");
                     }
                 });
             }
@@ -159,7 +157,7 @@ public class DemoActivity extends AppCompatActivity {
                 DemoActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DemoActivity.this, "onGetCurrentMap", Toast.LENGTH_LONG).show();
+                        Log.i(TAG, "onGetCurrentMap");
                     }
                 });
             }
@@ -171,11 +169,23 @@ public class DemoActivity extends AppCompatActivity {
 //                MyApp.toastText("onClick: \n"
 //                        + "On Screen{ x=" + String.valueOf(event.getX()) + " y=" + String.valueOf(event.getY()) + " } \n"
 //                        + "On Map{ x=" + String.valueOf(XY[0]) + " y=" + String.valueOf(XY[1]) + " } ");
-//                mapView.setLocationOverlay(XY);
-//                mapView.refresh();
             }
         });
 
+    }
+
+    public void loadDemoMap() {
+        Floorplan floorplan=new Floorplan("demo.svg");
+        floorplan.setSvg(AssetsHelper.getContent(floorplan.getFilename()));
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("local", true);
+        Message msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
+        msg.setData(bundle);
+        try {
+            new Messenger(handler).send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -219,35 +229,35 @@ public class DemoActivity extends AppCompatActivity {
         String str;
         switch (item.getItemId()) {
             case R.id.action_net_test:
-                Network.getRequest("time", handler,IndoorLocationService.SHOW_TEXT);
+                Network.getRequest("time", handler, IndoorLocationService.SHOW_TEXT);
                 break;
             case R.id.action_send_message:
                 indoorLocationBinder.sendMessage();
                 break;
             case R.id.action_building_test:
                 Building building = new Building();
-                str=MyApp.toGson(building);
-                Log.i(TAG,str);
-                Building tempb=MyApp.getGson().fromJson(str,Building.class);
-                Log.i(TAG,MyApp.getGson().toJson(tempb));
+                str = MyApp.toGson(building);
+                Log.i(TAG, str);
+                Building tempb = MyApp.getGson().fromJson(str, Building.class);
+                Log.i(TAG, MyApp.getGson().toJson(tempb));
                 MyApp.toastText(str);
                 break;
             case R.id.action_area_test:
                 Area area = new Area();
-                str=MyApp.toGson(area);
-                Log.i(TAG,str);
-                Area tempa=MyApp.getGson().fromJson(str,Area.class);
-                Log.i(TAG,MyApp.getGson().toJson(tempa));
+                str = MyApp.toGson(area);
+                Log.i(TAG, str);
+                Area tempa = MyApp.getGson().fromJson(str, Area.class);
+                Log.i(TAG, MyApp.getGson().toJson(tempa));
                 MyApp.toastText(str);
                 break;
-            case  R.id.action_locate_conf:
-                Bundle locateEngineConf=new Bundle();
-                locateEngineConf.putString("Method","RADAR");
-                locateEngineConf.putString("K","3");
-                str=MyApp.getJsonWithBundle(locateEngineConf);
-                Log.i(TAG,str);
-                Bundle tempbu=MyApp.getBundleWithJson(str);
-                Log.i(TAG,MyApp.getJsonWithBundle(tempbu));
+            case R.id.action_locate_conf:
+                Bundle locateEngineConf = new Bundle();
+                locateEngineConf.putString("Method", "RADAR");
+                locateEngineConf.putString("K", "3");
+                str = MyApp.getJsonWithBundle(locateEngineConf);
+                Log.i(TAG, str);
+                Bundle tempbu = MyApp.getBundleWithJson(str);
+                Log.i(TAG, MyApp.getJsonWithBundle(tempbu));
                 MyApp.toastText(str);
                 break;
             case R.id.action_set_ip:

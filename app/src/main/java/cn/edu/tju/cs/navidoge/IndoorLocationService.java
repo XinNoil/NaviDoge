@@ -66,36 +66,34 @@ public class IndoorLocationService extends Service {
                 case INITIAL_SERVICE:
                     isInit = true;
                     MyApp.toastText(msg.getData().toString());
-                    Log.i(TAG,msg.getData().toString());
+                    Log.i(TAG, msg.getData().toString());
                     try {
-                        JSONObject json=new JSONObject(msg.getData().getString("Body"));
-                        Building building=MyApp.getGson().fromJson(json.getString("building"),Building.class);
+                        JSONObject json = new JSONObject(msg.getData().getString("Body"));
+                        Building building = MyApp.getGson().fromJson(json.getString("building"), Building.class);
                         DataControl.setBuilding(building);
-                        Area area=MyApp.getGson().fromJson(json.getString("area"),Area.class);
+                        Area area = MyApp.getGson().fromJson(json.getString("area"), Area.class);
                         DataControl.setArea(area);
                         DataControl.setBssidBundle(json.getString("bssids"));
                         DataControl.setLocateEngineConf(json.getString("locateEngineConf"));
-                        Floorplan floorplan=new Floorplan(json.getString("floorplan"));
+                        Floorplan floorplan = new Floorplan(json.getString("floorplan"));
                         DataControl.setFloorplan(floorplan);
 
-                        Log.d(TAG,json.toString());
-                        Log.d(TAG,DataControl.getBuilding().getAddress());
-                        Log.d(TAG,DataControl.getArea().getName());
-                        Log.d(TAG,"Bundle Size: "+String.valueOf(DataControl.getBssidBundle().size()));
-                        Log.d(TAG,MyApp.getJsonWithBundle(DataControl.getLocateEngineConf()));
-                        Log.d(TAG,DataControl.getFloorplan().getFilename());
+                        Log.d(TAG, json.toString());
+                        Log.d(TAG, DataControl.getBuilding().getAddress());
+                        Log.d(TAG, DataControl.getArea().getName());
+                        Log.d(TAG, "Bundle Size: " + String.valueOf(DataControl.getBssidBundle().size()));
+                        Log.d(TAG, MyApp.getJsonWithBundle(DataControl.getLocateEngineConf()));
+                        Log.d(TAG, DataControl.getFloorplan().getFilename());
 
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean("local", false);
-                        Message n_msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
-                        n_msg.setData(bundle);
+                        JSONObject jsonObject = new JSONObject();
                         try {
-                            messenger.send(n_msg);
-                        } catch (RemoteException e) {
+                            jsonObject.put("filename", DataControl.getFloorplan().getFilename());
+                            Network.postRequest("floorplan", nHandler, GET_FLOORPLAN, jsonObject.toString());
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                    }catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -121,7 +119,7 @@ public class IndoorLocationService extends Service {
                     if (msg.getData().getInt("Status") == 1) {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("local", false);
-                        bundle.putString("floor_plan", msg.getData().toString());
+                        bundle.putString("floor_plan", msg.getData().getString("Body"));
                         Message n_msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
                         n_msg.setData(bundle);
                         try {
@@ -184,7 +182,21 @@ public class IndoorLocationService extends Service {
             askGPSPermission(activity);
         }
 
-        void askGPSPermission(Activity activity){DataControl.getGpsScan().askPermission(activity);}
+        void askGPSPermission(Activity activity) {
+            DataControl.getGpsScan().askPermission(activity);
+        }
+
+        void loadLocalMap(){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("local", true);
+            Message msg = Message.obtain(null, IndoorLocationService.LOAD_MAP);
+            msg.setData(bundle);
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static IndoorLocationBinder getBinder() {
@@ -214,13 +226,11 @@ public class IndoorLocationService extends Service {
     public void onCreate() {
         super.onCreate();
         if (!isInit) {
-            timer();
             mBinder.initialService();
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("a_id", 1);
-            Log.i(TAG, jsonObject.toString());
-            Network.getRequest("bssids", nHandler, GET_BSSIDS);
-            //Network.postRequest("bssids", nHandler, GET_BSSIDS,jsonObject.toString());
+            timer();
+        }
+        else {
+            mBinder.loadLocalMap();
         }
         isServicing = true;
         Log.d(TAG, "onCreate");
