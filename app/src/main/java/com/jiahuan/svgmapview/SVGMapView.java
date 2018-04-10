@@ -132,19 +132,21 @@ public class SVGMapView extends FrameLayout {
 
     public String getMapInfo() {
         StringBuilder mapInfo = new StringBuilder();
-        mapInfo.append("Size: "+mapMainView.getFloorMap().getWidth()+" "+mapMainView.getFloorMap().getHeight());
+        mapInfo.append("Size: " + mapMainView.getFloorMap().getWidth() + " " + mapMainView.getFloorMap().getHeight());
         return mapInfo.toString();
     }
 
-    public int getFloorPlanWidth(){
+    public int getFloorPlanWidth() {
         return mapMainView.getFloorMap().getWidth();
     }
 
-    public int getFloorPlanHeight(){
+    public int getFloorPlanHeight() {
         return mapMainView.getFloorMap().getHeight();
     }
 
-    public void locationCenter(float x,float y){
-        mapMainView.locationCenter(x,y);
+    public void locationCenter() {
+        PointF pointF=locationOverlay.getPosition();
+        float[] s = mapMainView.getScreenCoordinateWithMapCoordinate(pointF.x, pointF.y);
+        mapMainView.locationCenter(s[0],s[1]);
     }
 }

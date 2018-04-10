@@ -129,4 +129,12 @@ public class DataControl implements Serializable {
     public static void setFloorplan(Floorplan _floorplan) {
         floorplan = _floorplan;
     }
+
+    public static float[] getPixLoc(float[] location) {
+        float[] pix = new float[2];
+        pix[0] = (location[0] + 1.34f) * DataControl.getFloorplan().getWidth() / DataControl.getArea().getWidth();
+        pix[1] = (location[1] + 7.5f) * DataControl.getFloorplan().getHeight() / DataControl.getArea().getHeight();
+        return pix;
+
+    }
 }

@@ -42,10 +42,10 @@ public class MapMainView extends SurfaceView implements Callback {
     private boolean isMapLoadFinsh = false;
 
     private static final int TOUCH_STATE_REST = 0;
-    private static final int TOUCH_STATE_SCROLLING = 1;
-    private static final int TOUCH_STATE_SCALING = 2;
-    private static final int TOUCH_STATE_ROTATE = 3;
-    private static final int TOUCH_STATE_POINTED = 4;
+    private static final int TOUCH_STATE_SCROLLING = 1; // 滚动
+    private static final int TOUCH_STATE_SCALING = 2; // 放缩
+    private static final int TOUCH_STATE_ROTATE = 3; // 旋转
+    private static final int TOUCH_STATE_POINTED = 4; // 第二个手指摁下
     private int mTouchState = MapMainView.TOUCH_STATE_REST;
 
     private float disX; // 判断旋转和缩放的手势专用
@@ -374,6 +374,12 @@ public class MapMainView extends SurfaceView implements Callback {
         return returnValue;
     }
 
+    public float[] getScreenCoordinateWithMapCoordinate(float x, float y) {
+        float returnValue[] = {x, y};
+        matrix.mapPoints(returnValue);
+        return returnValue;
+    }
+
     public void registerMapViewListener(SVGMapViewListener mapViewListener) {
         this.mapViewListener = mapViewListener;
     }
@@ -489,9 +495,8 @@ public class MapMainView extends SurfaceView implements Callback {
         refresh();
     }
 
-    public void locationCenter(float x,float y){
-        matrix.set(savedMatrix);
-        matrix.postTranslate(x - start.x, y - start.y);
+    public void locationCenter(float x, float y) {
+        matrix.postTranslate(getWidth() / 2 - x, getHeight() / 2 - y);
         this.refresh();
     }
 
@@ -559,11 +564,11 @@ public class MapMainView extends SurfaceView implements Callback {
                 && goal[1] < mapOverlay.getFloorMap().getHeight();
     }
 
-    public MapOverlay getMapOverlay(){
+    public MapOverlay getMapOverlay() {
         return this.mapOverlay;
     }
 
-    public Picture getFloorMap(){
+    public Picture getFloorMap() {
         return this.getMapOverlay().getFloorMap();
     }
 }
