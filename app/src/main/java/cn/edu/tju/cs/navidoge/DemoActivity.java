@@ -227,12 +227,25 @@ public class DemoActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         String str;
+        AlertDialog.Builder dialog;
         switch (item.getItemId()) {
             case R.id.action_net_test:
                 Network.getRequest("time", handler, IndoorLocationService.SHOW_TEXT);
                 break;
             case R.id.action_send_message:
                 indoorLocationBinder.sendMessage();
+                break;
+            case R.id.action_map_info:
+                dialog = new AlertDialog.Builder(this);
+                dialog.setTitle("Map Info");
+                dialog.setMessage(mapView.getMapInfo());
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                dialog.show();
                 break;
             case R.id.action_building_test:
                 Building building = new Building();
@@ -261,7 +274,7 @@ public class DemoActivity extends AppCompatActivity {
                 MyApp.toastText(str);
                 break;
             case R.id.action_set_ip:
-                AlertDialog.Builder dialog = new AlertDialog.Builder(DemoActivity.this);
+                dialog = new AlertDialog.Builder(DemoActivity.this);
                 dialog.setTitle("IP setting");
                 final EditText editText = new EditText(DemoActivity.this);
                 dialog.setView(editText);

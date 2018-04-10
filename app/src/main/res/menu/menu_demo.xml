@@ -20,6 +20,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_map_info"
+        android:title="地图信息"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_building_test"
         android:title="建筑类测试"
         app:showAsAction="never"/>

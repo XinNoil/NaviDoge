@@ -1,9 +1,13 @@
 package cn.edu.tju.cs.navidoge.UI;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import cn.edu.tju.cs.navidoge.MyApp;
@@ -31,5 +35,17 @@ public class AssetsHelper
             e.printStackTrace();
             return null;
         }
+    }
+    public static Bitmap getBitmap(String fileName)
+    {
+        Bitmap bitmap=null;
+        try {
+            InputStream is = MyApp.getContext().getAssets().open(fileName);
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }

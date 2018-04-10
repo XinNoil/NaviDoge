@@ -16,6 +16,8 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -30,6 +32,9 @@ import android.graphics.Shader;
 import android.graphics.Shader.TileMode;
 import android.util.FloatMath;
 import android.util.Log;
+
+import cn.edu.tju.cs.navidoge.MyApp;
+import cn.edu.tju.cs.navidoge.UI.AssetsHelper;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
@@ -1653,6 +1658,35 @@ public class SVGParser
 					doLimits(rect, strokePaint);
 				}
 				popTransform();
+				if(getStringAttr("name",atts)!=null)
+				{
+				    String str=getStringAttr("name",atts);
+					Log.i("Map",str);
+                    Paint textPaint = new Paint();          // 创建画笔
+                    textPaint.setColor(Color.BLACK);        // 设置颜色
+                    textPaint.setStyle(Paint.Style.FILL);   // 设置样式
+                    textPaint.setTextSize(4);
+                    textPaint.setTextAlign(Paint.Align.CENTER);
+                    Paint.FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
+                    int baseline = (int)(rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top);
+                    canvas.drawText(str,rect.centerX(),baseline,textPaint);
+				}
+                if(getStringAttr("type",atts)!=null)
+                {
+                    String str=getStringAttr("type",atts);
+                    Log.i("Map",str);
+                    Bitmap bitmap = AssetsHelper.getBitmap(str+".png");
+                    int oldwidth = bitmap.getWidth();
+                    int oldheight = bitmap.getHeight();
+                    // 计算缩放比例.
+                    float scaleWidth = ((float) 10) / oldwidth;
+                    float scaleHeight = ((float) 10) / oldheight;
+                    // 取得想要缩放的matrix参数.
+                    Matrix matrix = new Matrix();
+                    matrix.postScale(scaleWidth, scaleHeight);
+                    matrix.postTranslate(rect.centerX(),rect.centerY());
+                    canvas.drawBitmap(bitmap,matrix,new Paint());
+                }
 			}
 			else if (!hidden && localName.equals("line"))
 			{
@@ -1759,6 +1793,35 @@ public class SVGParser
 					doLimits(rect, strokePaint);
 				}
 				popTransform();
+				if(getStringAttr("name",atts)!=null)
+				{
+				    String str=getStringAttr("name",atts);
+					Log.i("Map",str);
+                    Paint textPaint = new Paint();          // 创建画笔
+                    textPaint.setColor(Color.BLACK);        // 设置颜色
+                    textPaint.setStyle(Paint.Style.FILL);   // 设置样式
+                    textPaint.setTextSize(4);
+                    textPaint.setTextAlign(Paint.Align.CENTER);
+                    Paint.FontMetricsInt fontMetrics = textPaint.getFontMetricsInt();
+                    int baseline = (int)(rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top);
+                    canvas.drawText(str,rect.centerX(),baseline,textPaint);
+				}
+                if(getStringAttr("type",atts)!=null)
+                {
+                    String str=getStringAttr("type",atts);
+                    Log.i("Map",str);
+                    Bitmap bitmap = AssetsHelper.getBitmap(str+".png");
+                    int oldwidth = bitmap.getWidth();
+                    int oldheight = bitmap.getHeight();
+                    // 计算缩放比例.
+                    float scaleWidth = ((float) 10) / oldwidth;
+                    float scaleHeight = ((float) 10) / oldheight;
+                    // 取得想要缩放的matrix参数.
+                    Matrix matrix = new Matrix();
+                    matrix.postScale(scaleWidth, scaleHeight);
+                    matrix.postTranslate(rect.centerX(),rect.centerY());
+                    canvas.drawBitmap(bitmap,matrix,new Paint());
+                }
 			}
 			else if (!hidden)
 			{
