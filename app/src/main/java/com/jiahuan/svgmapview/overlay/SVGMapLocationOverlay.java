@@ -20,6 +20,7 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
     // Color for compass
     private static final int DEFAULT_LOCATION_COLOR = 0xFF3EBFC9;
     private static final int DEFAULT_LOCATION_SHADOW_COLOR = 0xFF909090;
+    private static final int DEFAULT_COVER_COLOR = 0xFF66CCFF;
     private static final int DEFAULT_INDICATOR_ARC_COLOR = 0xFFFA4A8D;
     private static final int DEFAULT_INDICATOR_CIRCLE_COLOR = 0xFF00F0FF;
     private static final float COMPASS_DELTA_ANGLE = 5.0f;
@@ -41,6 +42,7 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
     private Paint locationPaint;
     private Paint indicatorCirclePaint;
     private Paint indicatorArcPaint;
+    private Paint coverPaint;
 
     private PointF currentPosition = null;
     private int currentMode = MODE_NORMAL;
@@ -53,14 +55,23 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
     private void initLayer(SVGMapView svgMapView)
     {
         this.showLevel = LOCATION_LEVEL;
-        //
+        // locationPaint init
         locationPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         locationPaint.setAntiAlias(true);
         locationPaint.setStyle(Paint.Style.FILL);
         locationPaint.setColor(DEFAULT_LOCATION_COLOR);
         locationPaint.setShadowLayer(5, 3, 3, DEFAULT_LOCATION_SHADOW_COLOR);
+
+        // coverPaint init
+        coverPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        coverPaint.setAntiAlias(true);
+        coverPaint.setStyle(Paint.Style.FILL);
+        coverPaint.setColor(DEFAULT_COVER_COLOR);
+        coverPaint.setAlpha(55);
+
         //
         defaultLocationCircleRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, svgMapView.getResources().getDisplayMetrics());
+
         //
         compassRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 38, svgMapView.getResources().getDisplayMetrics());
         compassLocationCircleRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0.5f, svgMapView.getResources().getDisplayMetrics());
@@ -69,16 +80,19 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
         compassArcWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4.0f, svgMapView.getResources().getDisplayMetrics());
         compassIndicatorCircleRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.6f, svgMapView.getResources().getDisplayMetrics());
         compassIndicatorGap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15.0f, svgMapView.getResources().getDisplayMetrics());
+
         //
         compassLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         compassLinePaint.setAntiAlias(true);
         compassLinePaint.setStrokeWidth(compassLineWidth);
+
         //
         indicatorCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         indicatorCirclePaint.setAntiAlias(true);
         indicatorCirclePaint.setStyle(Paint.Style.FILL);
         indicatorCirclePaint.setShadowLayer(3, 1, 1, DEFAULT_LOCATION_SHADOW_COLOR);
         indicatorCirclePaint.setColor(DEFAULT_INDICATOR_CIRCLE_COLOR);
+
         //
         indicatorArcPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         indicatorArcPaint.setStyle(Paint.Style.STROKE);
@@ -149,7 +163,7 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
         {
             float goal[] = {currentPosition.x, currentPosition.y};
             matrix.mapPoints(goal);
-
+            canvas.drawCircle(goal[0], goal[1], defaultLocationCircleRadius*5, coverPaint);
             canvas.drawCircle(goal[0], goal[1], defaultLocationCircleRadius, locationPaint);
 
             if (currentMode == MODE_COMPASS)

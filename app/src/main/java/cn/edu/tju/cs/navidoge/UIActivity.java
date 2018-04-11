@@ -167,7 +167,7 @@ public class UIActivity extends AppCompatActivity {
             case R.id.spark_overlay:
                 int color = Color.BLUE;
                 Random random = new Random();
-                mapView.getController().sparkAtPoint(new PointF(20, 30), 10, color, 3);
+                mapView.getController().sparkAtPoint(new PointF(20, 30), 10, color, 0);
                 break;
         }
         return true;

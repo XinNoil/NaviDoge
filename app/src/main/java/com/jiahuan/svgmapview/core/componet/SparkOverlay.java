@@ -11,7 +11,7 @@ import com.jiahuan.svgmapview.overlay.SVGMapBaseOverlay;
 
 public class SparkOverlay extends SVGMapBaseOverlay
 {
-    private static final float STEP = 2f;
+    private static final float STEP = 5f;
     private static final long delayTime = 40;
     //
     private MapMainView mapMainView;
@@ -27,7 +27,9 @@ public class SparkOverlay extends SVGMapBaseOverlay
 
     public SparkOverlay(MapMainView mapMainView, float radius, PointF centerPoint, int color, int repeatTimes)
     {
-        initLayer(mapMainView, radius, centerPoint, color, repeatTimes);
+        if(repeatTimes>0)
+            initLayer(mapMainView, radius, centerPoint, color, repeatTimes);
+
     }
 
     private void initLayer(MapMainView mapMainView, float radius, PointF centerPoint, int color, int repeatTimes)

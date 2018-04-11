@@ -124,7 +124,10 @@ public class SVGMapView extends FrameLayout {
             this.getOverLays().remove(locationOverlay);
         }
         locationOverlay = new SVGMapLocationOverlay(this);
-        locationOverlay.setIndicatorArrowBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.indicator_arrow));
+        locationOverlay.setMode(SVGMapLocationOverlay.MODE_NORMAL);
+//        locationOverlay.setIndicatorArrowBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.indicator_arrow));
+//        locationOverlay.setIndicatorCircleRotateDegree(22);
+//        locationOverlay.setIndicatorArrowRotateDegree(-22);
         locationOverlay.setPosition(new PointF(XY[0], XY[1]));
         this.getOverLays().add(locationOverlay);
         this.refresh();

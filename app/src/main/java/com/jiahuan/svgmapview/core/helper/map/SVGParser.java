@@ -1676,15 +1676,18 @@ public class SVGParser
                     String str=getStringAttr("type",atts);
                     Log.i("Map",str);
                     Bitmap bitmap = AssetsHelper.getBitmap(str+".png");
-                    int oldwidth = bitmap.getWidth();
-                    int oldheight = bitmap.getHeight();
+                    int oldWidth = bitmap.getWidth();
+                    int oldHeight = bitmap.getHeight();
+                    int newWidth=10;
+                    int newHeight=10;
                     // 计算缩放比例.
-                    float scaleWidth = ((float) 10) / oldwidth;
-                    float scaleHeight = ((float) 10) / oldheight;
+                    float scaleWidth = ((float) newWidth) / oldWidth;
+                    float scaleHeight = ((float) newWidth) / oldHeight;
                     // 取得想要缩放的matrix参数.
                     Matrix matrix = new Matrix();
                     matrix.postScale(scaleWidth, scaleHeight);
                     matrix.postTranslate(rect.centerX(),rect.centerY());
+                    matrix.postTranslate(-newHeight/2,-newWidth/2);
                     canvas.drawBitmap(bitmap,matrix,new Paint());
                 }
 			}
@@ -1778,6 +1781,7 @@ public class SVGParser
 			}
 			else if (!hidden && localName.equals("path"))
 			{
+                Log.i("MapPath:",getStringAttr("id",atts));
 				Path p = doPath(getStringAttr("d", atts));
 				pushTransform(atts);
 				Properties props = new Properties(atts);
@@ -1796,7 +1800,7 @@ public class SVGParser
 				if(getStringAttr("name",atts)!=null)
 				{
 				    String str=getStringAttr("name",atts);
-					Log.i("Map",str);
+					Log.i("MapPath",str);
                     Paint textPaint = new Paint();          // 创建画笔
                     textPaint.setColor(Color.BLACK);        // 设置颜色
                     textPaint.setStyle(Paint.Style.FILL);   // 设置样式
@@ -1811,15 +1815,18 @@ public class SVGParser
                     String str=getStringAttr("type",atts);
                     Log.i("Map",str);
                     Bitmap bitmap = AssetsHelper.getBitmap(str+".png");
-                    int oldwidth = bitmap.getWidth();
-                    int oldheight = bitmap.getHeight();
+                    int oldWidth = bitmap.getWidth();
+                    int oldHeight = bitmap.getHeight();
+                    int newWidth=10;
+                    int newHeight=10;
                     // 计算缩放比例.
-                    float scaleWidth = ((float) 10) / oldwidth;
-                    float scaleHeight = ((float) 10) / oldheight;
+                    float scaleWidth = ((float) newWidth) / oldWidth;
+                    float scaleHeight = ((float) newWidth) / oldHeight;
                     // 取得想要缩放的matrix参数.
                     Matrix matrix = new Matrix();
                     matrix.postScale(scaleWidth, scaleHeight);
                     matrix.postTranslate(rect.centerX(),rect.centerY());
+                    matrix.postTranslate(-newHeight/2,-newWidth/2);
                     canvas.drawBitmap(bitmap,matrix,new Paint());
                 }
 			}
